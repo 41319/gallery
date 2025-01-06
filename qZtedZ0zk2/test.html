@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather App</title>
+    <title>BMI Calculator with Weather</title>
     <style>
         /* CSS Styling */
         body {
@@ -70,69 +70,93 @@
             color: #333;
         }
 
+        .weather {
+            margin-top: 20px;
+        }
+
         .weather-icon {
             width: 50px;
             height: 50px;
-            margin: 10px auto;
         }
     </style>
 </head>
 <body>
     <!-- HTML Structure -->
     <div class="container">
-        <h1>Weather App</h1>
-        <form id="weatherForm">
+        <h1>BMI Calculator with Weather</h1>
+        <form id="bmiForm">
             <div class="input-group">
-                <label for="city">City:</label>
-                <input type="text" id="city" placeholder="Enter city name" required>
+                <label for="height">Height (cm):</label>
+                <input type="number" id="height" placeholder="Enter height in cm" required>
             </div>
-            <button type="submit">Get Weather</button>
+            <div class="input-group">
+                <label for="weight">Weight (kg):</label>
+                <input type="number" id="weight" placeholder="Enter weight in kg" required>
+            </div>
+            <button type="submit">Calculate BMI</button>
         </form>
-        <div id="result">
-            <!-- Weather data will be displayed here -->
+        <div id="result"></div>
+        <div class="weather">
+            <h2>Current Weather</h2>
+            <div id="weather-info">
+                <img id="weather-icon" class="weather-icon" src="" alt="Weather Icon">
+                <p id="weather-description"></p>
+                <p id="temperature"></p>
+            </div>
         </div>
     </div>
 
     <!-- JavaScript Logic -->
     <script>
-        document.getElementById('weatherForm').addEventListener('submit', function(event) {
+        document.getElementById('bmiForm').addEventListener('submit', function(event) {
             event.preventDefault();
 
-            // Get the city name
-            const city = document.getElementById('city').value;
+            // Get height and weight values
+            const height = parseFloat(document.getElementById('height').value) / 100; // Convert cm to meters
+            const weight = parseFloat(document.getElementById('weight').value);
 
-            // Fetch weather data from OpenWeatherMap API
-            const apiKey = 'YOUR_API_KEY'; // Replace with your OpenWeatherMap API key
-            const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+            // Calculate BMI
+            const bmi = weight / (height * height);
 
-            fetch(apiUrl)
-                .then(response => response.json())
-                .then(data => {
-                    const resultElement = document.getElementById('result');
+            // Display result
+            const resultElement = document.getElementById('result');
+            resultElement.textContent = `Your BMI is: ${bmi.toFixed(2)}`;
 
-                    if (data.cod === 200) {
-                        // Display weather data
-                        const temperature = data.main.temp;
-                        const weatherDescription = data.weather[0].description;
-                        const icon = data.weather[0].icon;
-
-                        resultElement.innerHTML = `
-                            <div>
-                                <img src="http://openweathermap.org/img/wn/${icon}.png" alt="${weatherDescription}" class="weather-icon">
-                                <p>Temperature: ${temperature}°C</p>
-                                <p>Condition: ${weatherDescription}</p>
-                            </div>
-                        `;
-                    } else {
-                        // Display error message
-                        resultElement.textContent = 'City not found. Please try again.';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching weather data:', error);
-                    document.getElementById('result').textContent = 'Failed to fetch weather data. Please try again.';
-                });
+            // Add BMI category
+            let category = '';
+            if (bmi < 18.5) {
+                category = 'Underweight';
+            } else if (bmi >= 18.5 && bmi < 24.9) {
+                category = 'Normal weight';
+            } else if (bmi >= 25 && bmi < 29.9) {
+                category = 'Overweight';
+            } else {
+                category = 'Obesity';
+            }
+            resultElement.textContent += ` (${category})`;
         });
+
+        // Fetch weather data from OpenWeatherMap API
+        const apiKey = 'YOUR_OPENWEATHERMAP_API_KEY'; // Replace with your OpenWeatherMap API key
+        const city = 'London'; // Replace with your desired city
+
+        fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`)
+            .then(response => response.json())
+            .then(data => {
+                const weatherIcon = document.getElementById('weather-icon');
+                const weatherDescription = document.getElementById('weather-description');
+                const temperature = document.getElementById('temperature');
+
+                const iconCode = data.weather[0].icon;
+                const iconUrl = `http://openweathermap.org/img/wn/${iconCode}@2x.png`;
+
+                weatherIcon.src = iconUrl;
+                weatherDescription.textContent = data.weather[0].description;
+                temperature.textContent = `Temperature: ${data.main.temp}°C`;
+            })
+            .catch(error => {
+                console.error('Error fetching weather data:', error);
+            });
     </script>
 </body>
 </html>
