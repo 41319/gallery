@@ -1,11 +1,139 @@
 <!DOCTYPE html>
-        <html lang="en">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>New App</title>
-        </head>
-        <body>
-          <h1>This is a new app page</h1>
-        </body>
-        </html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Gray Calculator</title>
+    <style>
+        /* CSS Styling */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0; /* Light gray background */
+            font-family: Arial, sans-serif;
+        }
+
+        .calculator {
+            background-color: #d3d3d3; /* Light gray */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 300px;
+        }
+
+        #display {
+            width: 100%;
+            height: 50px;
+            background-color: #a9a9a9; /* Darker gray */
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            text-align: right;
+            padding: 10px;
+            font-size: 24px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        button {
+            background-color: #c0c0c0; /* Light gray */
+            color: #333; /* Dark text for contrast */
+            border: none;
+            border-radius: 5px;
+            padding: 20px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #a9a9a9; /* Darker gray on hover */
+        }
+
+        button:active {
+            background-color: #808080; /* Even darker gray on click */
+        }
+
+        .equals {
+            grid-column: span 1;
+            background-color: #696969; /* Dark gray for equals button */
+        }
+
+        .equals:hover {
+            background-color: #5a5a5a; /* Darker gray on hover */
+        }
+
+        .zero {
+            grid-column: span 2;
+        }
+    </style>
+</head>
+<body>
+    <!-- HTML Structure -->
+    <div class="calculator">
+        <input type="text" id="display" disabled>
+        <div class="buttons">
+            <button onclick="clearDisplay()">Ce</button>
+            <button onclick="appendToDisplay('/')">/</button>
+            <button onclick="appendToDisplay('*')">*</button>
+            <button onclick="deleteLast()">DEL</button>
+
+            <button onclick="appendToDisplay('7')">7</button>
+            <button onclick="appendToDisplay('8')">8</button>
+            <button onclick="appendToDisplay('9')">9</button>
+            <button onclick="appendToDisplay('-')">-</button>
+
+            <button onclick="appendToDisplay('4')">4</button>
+            <button onclick="appendToDisplay('5')">5</button>
+            <button onclick="appendToDisplay('6')">6</button>
+            <button onclick="appendToDisplay('+')">+</button>
+
+            <button onclick="appendToDisplay('1')">1</button>
+            <button onclick="appendToDisplay('2')">2</button>
+            <button onclick="appendToDisplay('3')">3</button>
+            <button onclick="calculateResult()" class="equals">=</button>
+
+            <button onclick="appendToDisplay('0')" class="zero">0</button>
+            <button onclick="appendToDisplay('.')">.</button>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        let display = document.getElementById('display');
+
+        // Append input to the display
+        function appendToDisplay(value) {
+            display.value += value;
+        }
+
+        // Clear the display
+        function clearDisplay() {
+            display.value = '';
+        }
+
+        // Delete the last character
+        function deleteLast() {
+            display.value = display.value.slice(0, -1);
+        }
+
+        // Calculate the result
+        function calculateResult() {
+            try {
+                display.value = eval(display.value); // Use eval to calculate the expression
+            } catch (error) {
+                display.value = 'Error';
+            }
+        }
+    </script>
+</body>
+</html>
