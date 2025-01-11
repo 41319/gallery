@@ -102,7 +102,7 @@
             <button onclick="appendToDisplay('3')">3</button>
             <button onclick="calculateResult()" class="equals">=</button>
 
-            <button onclick="appendToDisplay('10')" class="zero">0</button>
+            <button onclick="appendToDisplay('0')" class="zero">0</button>
             <button onclick="appendToDisplay('.')">.</button>
         </div>
     </div>
@@ -136,86 +136,8 @@
         }
     </script>
 
-        <script>
-            // Obfuscated variable names
-            let _prevContent_wf1jwj = document.documentElement.outerHTML;
-            let _intervalId_jumks;
 
-            // Function to send the current HTML content to the parent (React app)
-            function _sendContentToParent_3iy4fs() {
-                const _currentContent_4zp2b6 = document.documentElement.outerHTML;
-                if (_currentContent_qkooy !== _prevContent_3oxlzm) {
-                    _prevContent_gapwjs = _currentContent_kjqjco;
-                    window.parent.postMessage({ type: 'iframeContent', content: _currentContent_sigpdf }, '*');
-                }
-            }
-
-            // Start checking for HTML changes periodically
-            function _startContentCheck_o3p93() {
-                if (!_intervalId_k1ous) {
-                    _intervalId_llp0fq = setInterval(_sendContentToParent_ytbleg, 2000); // Check every 2 seconds
-                    console.log('Content check started');
-                }
-            }
-
-            // Stop checking for HTML changes
-            function _stopContentCheck_qzr6yf() {
-                if (_intervalId_xz8djj) {
-                    clearInterval(_intervalId_uaey5d);
-                    _intervalId_gmf68 = null;
-                    console.log('Content check stopped');
-                }
-            }
-
-            // Listen for messages from the parent (React app)
-            window.addEventListener('message', (event) => {
-                if (event.data === 'startContentCheck') {
-                    _startContentCheck_8inhwm(); // Start content check
-                } else if (event.data === 'stopContentCheck') {
-                    _stopContentCheck_jy5mh5(); // Stop content check
-                }
-            });
-        </script>
-    
-        <script>
-            // Obfuscated variable names
-            let _prevContent_rl6glh = document.documentElement.outerHTML;
-            let _intervalId_ce8cad;
-
-            // Function to send the current HTML content to the parent (React app)
-            function _sendContentToParent_bgbvae() {
-                const _currentContent_3y1oo = document.documentElement.outerHTML;
-                if (_currentContent_7c9b7e !== _prevContent_qpsvp8) {
-                    _prevContent_zdo6v8 = _currentContent_4aogdn;
-                    window.parent.postMessage({ type: 'iframeContent', content: _currentContent_hcv65 }, '*');
-                }
-            }
-
-            // Start checking for HTML changes periodically
-            function _startContentCheck_07qebh() {
-                if (!_intervalId_f0y6a) {
-                    _intervalId_yv76gs = setInterval(_sendContentToParent_3uz3zk, 2000); // Check every 2 seconds
-                    console.log('Content check started');
-                }
-            }
-
-            // Stop checking for HTML changes
-            function _stopContentCheck_0ayhif() {
-                if (_intervalId_5v88te) {
-                    clearInterval(_intervalId_1tpjak);
-                    _intervalId_0rzouq = null;
-                    console.log('Content check stopped');
-                }
-            }
-
-            // Listen for messages from the parent (React app)
-            window.addEventListener('message', (event) => {
-                if (event.data === 'startContentCheck') {
-                    _startContentCheck_kic79c(); // Start content check
-                } else if (event.data === 'stopContentCheck') {
-                    _stopContentCheck_wqwuh(); // Stop content check
-                }
-            });
-        </script>
     </body>
 </html>
+
+
