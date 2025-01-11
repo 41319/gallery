@@ -71,6 +71,16 @@
     .button.clear:hover {
       background-color: #e63329;
     }
+    /* Adjust the grid layout for the bottom row */
+    .buttons .button:nth-last-child(3) {
+      grid-column: span 2; /* Make the 0 button span two columns */
+    }
+    .buttons .button:nth-last-child(2) {
+      grid-column: 3; /* Place the . button in the third column */
+    }
+    .buttons .button:nth-last-child(1) {
+      grid-column: 4; /* Place the = button in the fourth column */
+    }
   </style>
 </head>
 <body>
@@ -88,12 +98,12 @@
       <button class="button" onclick="appendNumber('4')">4</button>
       <button class="button" onclick="appendNumber('5')">5</button>
       <button class="button" onclick="appendNumber('6')">6</button>
-      <button class="button equal" onclick="calculateResult()">=</button>
       <button class="button" onclick="appendNumber('1')">1</button>
       <button class="button" onclick="appendNumber('2')">2</button>
       <button class="button" onclick="appendNumber('3')">3</button>
-      <button class="button" onclick="appendNumber('0')">01</button>
+      <button class="button" onclick="appendNumber('0')">0</button>
       <button class="button" onclick="appendNumber('.')">.</button>
+      <button class="button equal" onclick="calculateResult()">=</button>
     </div>
   </div>
 
