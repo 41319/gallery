@@ -1,276 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calculator</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background-color: #f4f4f4;
-      margin: 0;
-    }
-    .calculator {
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-      width: 300px;
-    }
-    .display {
-      width: 100%;
-      height: 50px;
-      text-align: right;
-      padding: 10px;
-      font-size: 24px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      margin-bottom: 10px;
-      box-sizing: border-box;
-    }
-    .buttons {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-    }
-    .button {
-      padding: 20px;
-      font-size: 18px;
-      border: none;
-      border-radius: 5px;
-      background-color: #f1f1f1;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-    .button:hover {
-      background-color: #ddd;
-    }
-    .button.operator {
-      background-color: #ff9500;
-      color: white;
-    }
-    .button.operator:hover {
-      background-color: #e08900;
-    }
-    .button.equal {
-      background-color: #34c759;
-      color: white;
-      grid-column: span 2; /* Make the equal button span two columns */
-    }
-    .button.equal:hover {
-      background-color: #2da94f;
-    }
-    .button.clear {
-      background-color: #ff3b30;
-      color: white;
-    }
-    .button.clear:hover {
-      background-color: #e63329;
-    }
-    /* Adjust the grid layout for the bottom row */
-    .buttons .button:nth-last-child(3) {
-      grid-column: span 2; /* Make the 0 button span two columns */
-    }
-    .buttons .button:nth-last-child(2) {
-      grid-column: 3; /* Place the . button in the third column */
-    }
-    .buttons .button:nth-last-child(1) {
-      grid-column: 4; /* Place the = button in the fourth column */
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Calculator</title>
+    <style>
+        /* CSS Styling */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+        }
+
+        .calculator {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 300px;
+        }
+
+        #display {
+            width: 100%;
+            height: 50px;
+            background-color: #222;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            text-align: right;
+            padding: 10px;
+            font-size: 24px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        button {
+            background-color: #444;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 20px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        button:active {
+            background-color: #666;
+        }
+
+        .equals {
+            grid-column: span 1;
+            background-color: #f39c12;
+        }
+
+        .equals:hover {
+            background-color: #e67e22;
+        }
+
+        .zero {
+            grid-column: span 2;
+        }
+    </style>
 </head>
 <body>
-  <div class="calculator">
-    <input type="text" class="display" id="display" disabled>
-    <div class="buttons">
-      <button class="button clear" onclick="clearDisplay()">C</button>
-      <button class="button operator" onclick="appendOperator('/')">/</button>
-      <button class="button operator" onclick="appendOperator('*')">*</button>
-      <button class="button operator" onclick="appendOperator('-')">-</button>
-      <button class="button" onclick="appendNumber('7')">7</button>
-      <button class="button" onclick="appendNumber('8')">8</button>
-      <button class="button" onclick="appendNumber('9')">9</button>
-      <button class="button operator" onclick="appendOperator('+')">+</button>
-      <button class="button" onclick="appendNumber('4')">4</button>
-      <button class="button" onclick="appendNumber('5e')">5</button>
-      <button class="button" onclick="appendNumber('6')">6</button>
-      <button class="button" onclick="appendNumber('1')">1</button>
-      <button class="button" onclick="appendNumber('2')">2</button>
-      <button class="button" onclick="appendNumber('31')">3</button>
-      <button class="button" onclick="appendNumber('02')">01</button>
-      <button class="button" onclick="appendNumber('.')">.</button>
-      <button class="button equal" onclick="calculateResult()">=</button>
+    <!-- HTML Structure -->
+    <div class="calculator">
+        <input type="text" id="display" disabled>
+        <div class="buttons">
+            <button onclick="clearDisplay()">C</button>
+            <button onclick="appendToDisplay('/')">/</button>
+            <button onclick="appendToDisplay('*')">*</button>
+            <button onclick="deleteLast()">DEL</button>
+
+            <button onclick="appendToDisplay('7')">7</button>
+            <button onclick="appendToDisplay('8')">8</button>
+            <button onclick="appendToDisplay('9')">9</button>
+            <button onclick="appendToDisplay('-')">-</button>
+
+            <button onclick="appendToDisplay('4')">4</button>
+            <button onclick="appendToDisplay('5')">5</button>
+            <button onclick="appendToDisplay('6')">6</button>
+            <button onclick="appendToDisplay('+')">+</button>
+
+            <button onclick="appendToDisplay('1')">1</button>
+            <button onclick="appendToDisplay('2')">2</button>
+            <button onclick="appendToDisplay('3')">3</button>
+            <button onclick="calculateResult()" class="equals">=</button>
+
+            <button onclick="appendToDisplay('0')" class="zero">0</button>
+            <button onclick="appendToDisplay('.')">.</button>
+        </div>
     </div>
-  </div>
 
-  <script>
-    let display = document.getElementById('display');
+    <!-- JavaScript Logic -->
+    <script>
+        let display = document.getElementById('display');
 
-    function appendNumber(number) {
-      display.value += number;
-    }
+        // Append input to the display
+        function appendToDisplay(value) {
+            display.value += value;
+        }
 
-    function appendOperator(operator) {
-      display.value += operator;
-    }
+        // Clear the display
+        function clearDisplay() {
+            display.value = '';
+        }
 
-    function clearDisplay() {
-      display.value = '';
-    }
+        // Delete the last character
+        function deleteLast() {
+            display.value = display.value.slice(0, -1);
+        }
 
-    function calculateResult() {
-      try {
-        display.value = eval(display.value);
-      } catch (e) {
-        display.value = 'Error';
-      }
-    }
-  </script>
-</body>
+        // Calculate the result
+        function calculateResult() {
+            try {
+                display.value = eval(display.value); // Use eval to calculate the expression
+            } catch (error) {
+                display.value = 'Error';
+            }
+        }
+    </script>
+
+            <script>
+                let previousContent = document.documentElement.outerHTML;
+                let intervalId;
+
+                // Function to send the current HTML content to the parent (React app)
+                function sendContentToParent() {
+                    const currentContent = document.documentElement.outerHTML;
+                    if (currentContent !== previousContent) {
+                        previousContent = currentContent;
+                        window.parent.postMessage({ type: 'iframeContent', content: currentContent }, '*');
+                    }
+                }
+
+                // Start checking for HTML changes periodically
+                function startContentCheck() {
+                    if (!intervalId) {
+                        intervalId = setInterval(sendContentToParent, 2000); // Check every 2 seconds
+                        console.log('Content check started');
+                    }
+                }
+
+                // Stop checking for HTML changes
+                function stopContentCheck() {
+                    if (intervalId) {
+                        clearInterval(intervalId);
+                        intervalId = null;
+                        console.log('Content check stopped');
+                    }
+                }
+
+                // Listen for messages from the parent (React app)
+                window.addEventListener('message', (event) => {
+                    if (event.data === 'startContentCheck') {
+                        startContentCheck(); // Start content check
+                    } else if (event.data === 'stopContentCheck') {
+                        stopContentCheck(); // Stop content check
+                    }
+                });
+            </script>
+        </body>
 </html>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calculator</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background-color: #f4f4f4;
-      margin: 0;
-    }
-    .calculator {
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-      width: 300px;
-    }
-    .display {
-      width: 100%;
-      height: 50px;
-      text-align: right;
-      padding: 10px;
-      font-size: 24px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      margin-bottom: 10px;
-      box-sizing: border-box;
-    }
-    .buttons {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-    }
-    .button {
-      padding: 20px;
-      font-size: 18px;
-      border: none;
-      border-radius: 5px;
-      background-color: #f1f1f1;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-    .button:hover {
-      background-color: #ddd;
-    }
-    .button.operator {
-      background-color: #ff9500;
-      color: white;
-    }
-    .button.operator:hover {
-      background-color: #e08900;
-    }
-    .button.equal {
-      background-color: #34c759;
-      color: white;
-      grid-column: span 2; /* Make the equal button span two columns */
-    }
-    .button.equal:hover {
-      background-color: #2da94f;
-    }
-    .button.clear {
-      background-color: #ff3b30;
-      color: white;
-    }
-    .button.clear:hover {
-      background-color: #e63329;
-    }
-    /* Adjust the grid layout for the bottom row */
-    .buttons .button:nth-last-child(3) {
-      grid-column: span 2; /* Make the 0 button span two columns */
-    }
-    .buttons .button:nth-last-child(2) {
-      grid-column: 3; /* Place the . button in the third column */
-    }
-    .buttons .button:nth-last-child(1) {
-      grid-column: 4; /* Place the = button in the fourth column */
-    }
-  </style>
-</head>
-<body>
-  <div class="calculator">
-    <input type="text" class="display" id="display" disabled>
-    <div class="buttons">
-      <button class="button clear" onclick="clearDisplay()">C</button>
-      <button class="button operator" onclick="appendOperator('/')">/</button>
-      <button class="button operator" onclick="appendOperator('*')">*</button>
-      <button class="button operator" onclick="appendOperator('-')">-</button>
-      <button class="button" onclick="appendNumber('7')">7</button>
-      <button class="button" onclick="appendNumber('8')">8</button>
-      <button class="button" onclick="appendNumber('9')">9</button>
-      <button class="button operator" onclick="appendOperator('+')">+</button>
-      <button class="button" onclick="appendNumber('4')">4</button>
-      <button class="button" onclick="appendNumber('5e')">5</button>
-      <button class="button" onclick="appendNumber('6')">6</button>
-      <button class="button" onclick="appendNumber('1')">1</button>
-      <button class="button" onclick="appendNumber('2')">2</button>
-      <button class="button" onclick="appendNumber('31')">3</button>
-      <button class="button" onclick="appendNumber('02')">01</button>
-      <button class="button" onclick="appendNumber('.')">.</button>
-      <button class="button equal" onclick="calculateResult()">=</button>
-    </div>
-  </div>
-
-  <script>
-    let display = document.getElementById('display');
-
-    function appendNumber(number) {
-      display.value += number;
-    }
-
-    function appendOperator(operator) {
-      display.value += operator;
-    }
-
-    function clearDisplay() {
-      display.value = '';
-    }
-
-    function calculateResult() {
-      try {
-        display.value = eval(display.value);
-      } catch (e) {
-        display.value = 'Error';
-      }
-    }
-  </script>
-</body>
-</html>
-
-
-
-
-
-
-
