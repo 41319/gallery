@@ -1,0 +1,116 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Frontend Toolbox - Media Query Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f4f4f9;
+      color: #333;
+    }
+    h1 {
+      color: #444;
+    }
+    .toolbox {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    input[type="number"], select {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-family: monospace;
+      resize: vertical;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .output {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #e9ecef;
+      border-radius: 4px;
+    }
+  </style>
+<meta name="apps-name" content="MyApp"></meta></head>
+<body>
+  <div class="toolbox">
+    <h1>Frontend Toolbox</h1>
+    <h2>Media Query CSS Generator</h2>
+    <form id="mediaQueryForm">
+      <label for="minWidth">Minimum Width (px):</label>
+      <input type="number" id="minWidth" placeholder="e.g., 768">
+
+      <label for="maxWidth">Maximum Width (px):</label>
+      <input type="number" id="maxWidth" placeholder="e.g., 1024">
+
+      <label for="mediaType">Media Type:</label>
+      <select id="mediaType">
+        <option value="all">All</option>
+        <option value="screen">Screen</option>
+        <option value="print">Print</option>
+        <option value="speech">Speech</option>
+      </select>
+
+      <label for="cssRules">CSS Rules:</label>
+      <textarea id="cssRules" placeholder="e.g., body { font-size: 16px; }"></textarea>
+
+      <button type="button" onclick="generateMediaQuery()">Generate Media Query</button>
+    </form>
+
+    <div class="output">
+      <h3>Generated Media Query:</h3>
+      <pre id="outputCode"></pre>
+    </div>
+  </div>
+
+  <script>
+    function generateMediaQuery() {
+      const minWidth = document.getElementById('minWidth').value;
+      const maxWidth = document.getElementById('maxWidth').value;
+      const mediaType = document.getElementById('mediaType').value;
+      const cssRules = document.getElementById('cssRules').value;
+
+      let mediaQuery = `@media ${mediaType}`;
+
+      if (minWidth || maxWidth) {
+        mediaQuery += ' and (';
+        if (minWidth) mediaQuery += `min-width: ${minWidth}px`;
+        if (minWidth && maxWidth) mediaQuery += ' and ';
+        if (maxWidth) mediaQuery += `max-width: ${maxWidth}px`;
+        mediaQuery += ')';
+      }
+
+      const output = `${mediaQuery} {\n  ${cssRules.replace(/\n/g, '\n  ')}\n}`;
+      document.getElementById('outputCode').textContent = output;
+    }
+  </script>
+
+</body></html>
