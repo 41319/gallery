@@ -1,0 +1,207 @@
+<html><head><meta name="apps-name" content="MyApp"></meta></head><body>import React, { useState, useEffect } from 'react';
+import Layout from '../../components/Layout';
+import { Box, Typography, Button, IconButton, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import LinkIcon from '@mui/icons-material/Link'; // Import the Link icon
+import { SnackbarAlert } from '../../components/placeholder/SnackbarAlert';
+import { CodeEditor } from '../../components/placeholder/CodeEditor';
+import { AppOutput } from '../../components/placeholder/AppOutput';
+import { AIChat } from '../../components/placeholder/AIChat';
+import { PromptSection } from '../../components/placeholder/PromptSection';
+import { basicHTMLApp } from '../../helpers/git';
+import LoginModal from '../../components/LoginModal';
+import Parse from '../../vendor/Parse';
+
+const AppPage = ({ placeholder }) =&gt; { // Accept placeholder as a prop
+  const [prompt, setPrompt] = useState('');
+  const [enhancedPrompt, setEnhancedPrompt] = useState('');
+  const [code, setCode] = useState(basicHTMLApp);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('info');
+  const [systemPrompt, setSystemPrompt] = useState(
+    typeof window !== 'undefined' ? sessionStorage.getItem(`systemPrompt_${placeholder}`) || 'as a frontend developer, create a web application for the above in a single html file' : 'as a frontend developer, create a web application for the above in a single html file'
+  );
+  const [showCodeEditor, setShowCodeEditor] = useState(true);
+  const [showAppOutput, setShowAppOutput] = useState(true);
+  const [showAI, setShowAI] = useState(true);
+  const [appName, setAppName] = useState('MyApp');
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const [isAppDeployed, setIsAppDeployed] = useState(false); // State to track if the app is deployed
+  const [deployModalOpen, setDeployModalOpen] = useState(false); // State to control the deploy modal
+
+  useEffect(() =&gt; {
+    if (typeof window !== 'undefined') {
+      const savedCode = sessionStorage.getItem(`code_${placeholder}`);
+      if (savedCode) {
+        setCode(savedCode);
+      }
+    }
+  }, [placeholder]);
+
+  useEffect(() =&gt; {
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem(`code_${placeholder}`, code);
+    }
+  }, [code, placeholder]);
+
+  useEffect(() =&gt; {
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem(`systemPrompt_${placeholder}`, systemPrompt);
+    }
+  }, [systemPrompt, placeholder]);
+
+  useEffect(() =&gt; {
+    setEnhancedPrompt(`${code}\n\n${prompt}\n\n${systemPrompt}`);
+  }, [prompt, code, systemPrompt]);
+
+  useEffect(() =&gt; {
+    // Check if the user is already logged in
+    const currentUser = Parse.User.current();
+    if (currentUser) {
+      setUser(currentUser);
+    }
+  }, []);
+
+  useEffect(() =&gt; {
+    // Check the status of the deployed app
+    const checkAppStatus = async () =&gt; {
+      try {
+        const response = await fetch(`https://gallery.appify.website/${placeholder}/index.html`);
+        if (response.ok) {
+          setIsAppDeployed(true);
+        }
+      } catch (error) {
+        console.error('Error checking app status:', error);
+      }
+    };
+
+    if (placeholder) {
+      checkAppStatus();
+    }
+  }, [placeholder]);
+
+  const handleCopyPrompt = () =&gt; {
+    navigator.clipboard.writeText(enhancedPrompt).then(() =&gt; {
+      setSnackbarMessage('Prompt copied to clipboard!');
+      setSnackbarSeverity('success');
+      setSnackbarOpen(true);
+    });
+  };
+
+  const handlePromptChange = (e) =&gt; {
+    const value = e.target.value;
+    setPrompt(value);
+  };
+
+  const handleDeploy = async () =&gt; {
+    try {
+      // Call the Parse Cloud Function with appname, code, and placeholder
+      const result = await Parse.Cloud.run('deployApp', {
+        appname: appName,
+        code,
+        placeholder, // Include placeholder from the URL
+      });
+
+      // Handle the result
+      setSnackbarMessage('App deployed successfully!');
+      setSnackbarSeverity('success');
+      setSnackbarOpen(true);
+      setIsAppDeployed(true); // Set the app as deployed
+      console.log('Deployment result:', result);
+    } catch (error) {
+      // Handle errors
+      setSnackbarMessage('Failed to deploy app. Please try again.');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+      console.error('Deployment error:', error);
+    }
+  };
+
+  const handleLoginSuccess = () =&gt; {
+    const currentUser = Parse.User.current();
+    setUser(currentUser);
+  };
+
+  const handleDeployClick = () =&gt; {
+    // Open the deploy modal
+    setDeployModalOpen(true);
+  };
+
+  const handleDeployConfirm = () =&gt; {
+    // Close the modal and proceed with deployment
+    setDeployModalOpen(false);
+    handleDeploy();
+  };
+
+  return (
+    <layout deploybutton="{<Button" variant="contained" onclick="{handleDeployClick}">Deploy} appName={appName}&gt;
+      <box sx="{{" display:="" 'flex',="" flexdirection:="" 'column',="" alignitems:="" 'center',="" justifycontent:="" minheight:="" '80vh',="" textalign:="" 'center'="" }}="">
+        <box sx="{{" display:="" 'flex',="" alignitems:="" 'center',="" gap:="" 1="" }}="">
+          <typography variant="h3" component="h1" gutterbottom="">
+            {appName}
+          </typography>
+          {isAppDeployed &amp;&amp; (
+            <iconbutton color="primary" aria-label="app deployed" component="a" href="{`https://gallery.appify.website/${placeholder}/index.html`}" target="_blank">
+              <linkicon>
+            </linkicon></iconbutton>
+          )}
+        </box>
+
+        {/* Toggle Buttons */}
+        <box sx="{{" display:="" 'flex',="" gap:="" 2,="" mb:="" 2="" }}="">
+          {!showCodeEditor &amp;&amp; (
+            <button variant="outlined" onclick="{()" ==""> setShowCodeEditor(true)} startIcon={<visibilityicon>}&gt;
+              Show Code Editor
+            </visibilityicon></button>
+          )}
+          {!showAppOutput &amp;&amp; (
+            <button variant="outlined" onclick="{()" ==""> setShowAppOutput(true)} startIcon={<visibilityicon>}&gt;
+              Show App Output
+            </visibilityicon></button>
+          )}
+          {!showAI &amp;&amp; (
+            <button variant="outlined" onclick="{()" ==""> setShowAI(true)} startIcon={<visibilityicon>}&gt;
+              Show AI
+            </visibilityicon></button>
+          )}
+        </box>
+
+        {/* Three-View Layout */}
+        <box sx="{{" display:="" 'flex',="" flexdirection:="" {="" xs:="" 'column',="" md:="" 'row'="" },="" width:="" '100%',="" gap:="" 2,="" mt:="" 2="" }}="">
+          {showCodeEditor &amp;&amp; <codeeditor code="{code}" setcode="{setCode}" showcodeeditor="{showCodeEditor}" setshowcodeeditor="{setShowCodeEditor}">}
+          {showAppOutput &amp;&amp; <appoutput code="{code}" showappoutput="{showAppOutput}" setshowappoutput="{setShowAppOutput}">}
+          {showAI &amp;&amp; <aichat showai="{showAI}" setshowai="{setShowAI}">}
+        </aichat></appoutput></codeeditor></box>
+
+        {/* Prompt Section */}
+        <promptsection prompt="{prompt}" setprompt="{setPrompt}" enhancedprompt="{enhancedPrompt}" handlecopyprompt="{handleCopyPrompt}" systemprompt="{systemPrompt}" setsystemprompt="{setSystemPrompt}">
+      </promptsection></box>
+
+      {/* Login Modal */}
+      <loginmodal open="{loginModalOpen}" onclose="{()" ==""> setLoginModalOpen(false)} onLoginSuccess={handleLoginSuccess} /&gt;
+
+      {/* Deploy Confirmation Modal */}
+      <dialog open="{deployModalOpen}" onclose="{()" ==""> setDeployModalOpen(false)}&gt;
+        <dialogtitle>Bookmark This App</dialogtitle>
+        <dialogcontent>
+          <dialogcontenttext>
+            Before deploying, we recommend bookmarking this app to avoid losing it. Press <strong>Ctrl+D</strong> (Windows/Linux) or <strong>Cmd+D</strong> (Mac) to bookmark this page. Once Deployed, there will be a link beside the app name.
+          </dialogcontenttext>
+        </dialogcontent>
+        <dialogactions>
+          <button onclick="{()" ==""> setDeployModalOpen(false)}&gt;Cancel</button>
+          <button onclick="{handleDeployConfirm}" color="primary" variant="contained">
+            Deploy
+          </button>
+        </dialogactions>
+      </dialog>
+
+      {/* Snackbar */}
+      <snackbaralert open="{snackbarOpen}" message="{snackbarMessage}" severity="{snackbarSeverity}" onclose="{()" ==""> setSnackbarOpen(false)} /&gt;
+    </snackbaralert></loginmodal></layout>
+  );
+};
+
+export default AppPage;</body></html>
