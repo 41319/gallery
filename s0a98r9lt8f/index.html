@@ -1,0 +1,111 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JWT Token Viewer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      flex-direction: column;
+      text-align: center;
+    }
+    h1 {
+      color: #1976d2;
+      margin-bottom: 20px;
+    }
+    .container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      width: 100%;
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    button {
+      background-color: #1976d2;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #1565c0;
+    }
+    .output {
+      margin-top: 20px;
+      text-align: left;
+    }
+    .output pre {
+      background-color: #f5f5f5;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+  </style>
+<meta name="apps-name" content="MyApp"></meta></head>
+<body>
+  <h1>JWT Token Viewer</h1>
+  <div class="container">
+    <textarea id="jwtInput" placeholder="Paste your JWT here..."></textarea>
+    <button onclick="decodeJWT()">Decode JWT</button>
+    <div class="output">
+      <h3>Header:</h3>
+      <pre id="headerOutput"></pre>
+      <h3>Payload:</h3>
+      <pre id="payloadOutput"></pre>
+    </div>
+  </div>
+
+  <script>
+    function decodeJWT() {
+      const jwtInput = document.getElementById('jwtInput').value.trim();
+      const headerOutput = document.getElementById('headerOutput');
+      const payloadOutput = document.getElementById('payloadOutput');
+
+      // Clear previous output
+      headerOutput.textContent = '';
+      payloadOutput.textContent = '';
+
+      if (!jwtInput) {
+        alert('Please enter a JWT.');
+        return;
+      }
+
+      try {
+        const [headerBase64, payloadBase64] = jwtInput.split('.');
+        if (!headerBase64 || !payloadBase64) {
+          throw new Error('Invalid JWT format.');
+        }
+
+        // Decode header and payload
+        const header = JSON.parse(atob(headerBase64));
+        const payload = JSON.parse(atob(payloadBase64));
+
+        // Display decoded data
+        headerOutput.textContent = JSON.stringify(header, null, 2);
+        payloadOutput.textContent = JSON.stringify(payload, null, 2);
+      } catch (error) {
+        alert('Invalid JWT. Please check your input.');
+        console.error(error);
+      }
+    }
+  </script>
+
+</body></html>
