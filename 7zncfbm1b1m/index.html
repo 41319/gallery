@@ -1,0 +1,102 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>appseek.ai - Discover AI-Powered Applications</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        .hover-scale {
+            transition: transform 0.3s ease;
+        }
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+    </style>
+<meta name="apps-name" content="MyApp"></meta></head>
+<body class="bg-gray-100 text-gray-900 min-h-screen font-sans">
+    <!-- Header -->
+    <header class="bg-white py-6 sticky top-0 z-10 shadow-md">
+        <div class="container mx-auto px-4">
+            <h1 class="text-3xl font-bold text-indigo-600">appseek.ai</h1>
+            <p class="text-gray-600 mt-1">Your Gateway to AI-Powered Applications</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-12">
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- AI App Cards -->
+            <div class="bg-white p-6 rounded-xl shadow-md hover-scale animate-fade-in" onclick="window.open('https://www.chatgpt.com', '_blank')">
+                <h2 class="text-xl font-semibold text-indigo-500">ChatGPT</h2>
+                <p class="text-gray-600 mt-2">Advanced conversational AI by OpenAI for natural language processing.</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-md hover-scale animate-fade-in" onclick="window.open('https://deepseek.com', '_blank')">
+                <h2 class="text-xl font-semibold text-indigo-500">DeepSeek</h2>
+                <p class="text-gray-600 mt-2">Powerful Chinese AI assistant topping app store charts.</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-md hover-scale animate-fade-in" onclick="window.open('https://www.anthropic.com/claude', '_blank')">
+                <h2 class="text-xl font-semibold text-indigo-500">Claude</h2>
+                <p class="text-gray-600 mt-2">Safe and interpretable AI by Anthropic for complex tasks.</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-md hover-scale animate-fade-in" onclick="window.open('https://www.midjourney.com', '_blank')">
+                <h2 class="text-xl font-semibold text-indigo-500">Midjourney</h2>
+                <p class="text-gray-600 mt-2">AI-powered image generation for stunning artistic visuals.</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-md hover-scale animate-fade-in" onclick="window.open('https://www.perplexity.ai', '_blank')">
+                <h2 class="text-xl font-semibold text-indigo-500">Perplexity</h2>
+                <p class="text-gray-600 mt-2">AI search engine with real-time web results and citations.</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-md hover-scale animate-fade-in" onclick="window.open('https://www.grammarly.com', '_blank')">
+                <h2 class="text-xl font-semibold text-indigo-500">Grammarly</h2>
+                <p class="text-gray-600 mt-2">AI writing assistant for grammar and style enhancement.</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-md hover-scale animate-fade-in" onclick="window.open('https://www.lensa.ai', '_blank')">
+                <h2 class="text-xl font-semibold text-indigo-500">Lensa</h2>
+                <p class="text-gray-600 mt-2">AI photo editing and avatar generation tool.</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-md hover-scale animate-fade-in" onclick="window.open('https://starryai.com', '_blank')">
+                <h2 class="text-xl font-semibold text-indigo-500">StarryAI</h2>
+                <p class="text-gray-600 mt-2">Free AI image generator based on text prompts.</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-md hover-scale animate-fade-in" onclick="window.open('https://www.socratic.org', '_blank')">
+                <h2 class="text-xl font-semibold text-indigo-500">Socratic</h2>
+                <p class="text-gray-600 mt-2">AI learning app for students with visual explanations.</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-md hover-scale animate-fade-in" onclick="window.open('https://cleomoney.com', '_blank')">
+                <h2 class="text-xl font-semibold text-indigo-500">Cleo</h2>
+                <p class="text-gray-600 mt-2">AI chatbot for personal budgeting assistance.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white py-6 mt-12 shadow-inner">
+        <div class="container mx-auto px-4 text-center text-gray-600">
+            <p>© 2025 appseek.ai. Powered by xAI's Grok 3.</p>
+            <p class="mt-1">Discover the future of AI applications.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Add slight delay to animations for staggered effect
+        document.querySelectorAll('.animate-fade-in').forEach((el, index) => {
+            el.style.animationDelay = `${index * 0.1}s`;
+        });
+    </script>
+
+</body></html>
