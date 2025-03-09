@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <title>中文练习纸</title>
     <style>
@@ -20,12 +22,12 @@
         .grid-container {
             display: grid;
             grid-template-columns: repeat(8, 1fr); /* 8 columns */
-            grid-gap: 1mm; /* Reduced gap */
-            padding: 5mm;
+            grid-gap: 1mm; /* Gap between boxes */
+            padding: 5mm; /* Padding around grid */
         }
         .character-box {
-            width: 20mm; /* Smaller width */
-            height: 20mm; /* Smaller height */
+            width: 20mm; /* Box width */
+            height: 20mm; /* Box height */
             border: 1px solid #ccc;
             position: relative;
             background: #fff;
@@ -54,46 +56,11 @@
             }
         }
     </style>
-<meta name="apps-name" content="MyApp"></meta></head>
+</head>
 <body>
     <div class="worksheet">
         <div class="grid-container">
-            <!-- Box 1: Empty -->
-            <div class="character-box">
-                <div class="vertical-line"></div>
-                <div class="horizontal-line"></div>
-            </div>
-            <!-- Box 2: Empty -->
-            <div class="character-box">
-                <div class="vertical-line"></div>
-                <div class="horizontal-line"></div>
-            </div>
-            <!-- Box 3: Empty -->
-            <div class="character-box">
-                <div class="vertical-line"></div>
-                <div class="horizontal-line"></div>
-            </div>
-            <!-- Box 4: Empty -->
-            <div class="character-box">
-                <div class="vertical-line"></div>
-                <div class="horizontal-line"></div>
-            </div>
-            <!-- Box 5: Empty -->
-            <div class="character-box">
-                <div class="vertical-line"></div>
-                <div class="horizontal-line"></div>
-            </div>
-            <!-- Remaining boxes in the top row -->
-            <div class="character-box"><div class="vertical-line"></div><div class="horizontal-line"></div></div>
-            <div class="character-box"><div class="vertical-line"></div><div class="horizontal-line"></div></div>
-            <div class="character-box"><div class="vertical-line"></div><div class="horizontal-line"></div></div>
-            <!-- Remaining 96 boxes (8 columns × 12 more rows) -->
-            <div class="character-box"><div class="vertical-line"></div><div class="horizontal-line"></div></div>
-            <div class="character-box"><div class="vertical-line"></div><div class="horizontal-line"></div></div>
-            <div class="character-box"><div class="vertical-line"></div><div class="horizontal-line"></div></div>
-            <div class="character-box"><div class="vertical-line"></div><div class="horizontal-line"></div></div>
-            <div class="character-box"><div class="vertical-line"></div><div class="horizontal-line"></div></div>
-            <div class="character-box"><div class="vertical-line"></div><div class="horizontal-line"></div></div>
+            <!-- 96 boxes (8 columns × 12 rows) -->
             <div class="character-box"><div class="vertical-line"></div><div class="horizontal-line"></div></div>
             <div class="character-box"><div class="vertical-line"></div><div class="horizontal-line"></div></div>
             <div class="character-box"><div class="vertical-line"></div><div class="horizontal-line"></div></div>
@@ -194,5 +161,5 @@
             <div class="character-box"><div class="vertical-line"></div><div class="horizontal-line"></div></div>
         </div>
     </div>
-
-</body></html>
+</body>
+</html>
