@@ -1,0 +1,175 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn to Write Chinese Words</title>
+    <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5.0/dist/hanzi-writer.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .character {
+            font-size: 100px;
+            color: #d32f2f;
+            margin: 20px;
+        }
+        .info {
+            font-size: 24px;
+            margin: 10px;
+        }
+        #writer {
+            margin: 30px auto;
+            border: 2px solid #ccc;
+            background-color: white;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #controls {
+            margin-top: 20px;
+        }
+        #error-message {
+            font-size: 18px;
+            color: #d32f2f;
+            margin-top: 15px;
+            display: none;
+        }
+        #success-message {
+            font-size: 18px;
+            color: #4caf50;
+            margin-top: 15px;
+            display: none;
+        }
+        select {
+            padding: 10px;
+            font-size: 16px;
+            margin: 10px;
+            border-radius: 5px;
+            width: 200px;
+        }
+        #loading {
+            font-size: 18px;
+            color: #555;
+            margin: 10px;
+        }
+    </style>
+<meta name="apps-name" content="MyApp"></meta></head>
+<body>
+    <h1>Learn to Write Chinese Words</h1>
+    <div class="character" id="displayChar">爱</div>
+    <div class="info" id="pinyin">Pinyin: ài</div>
+    <div class="info" id="meaning">Meaning: Love</div>
+
+    <h2>Select a Word to Learn</h2>
+    <select id="wordSelect" onchange="updateCharacter()"></select>
+    <div id="loading">Loading characters...</div>
+
+    <h2>Stroke Order Animation &amp; Practice</h2>
+    <div id="writer" style="width: 300px; height: 300px;"></div>
+    <div id="error-message">Wrong stroke order! Try again.</div>
+    <div id="success-message">Great job! You wrote it correctly.</div>
+
+    <div id="controls">
+        <button onclick="writer.animateCharacter()">Show Stroke Order</button>
+        <button onclick="startQuiz()">Practice Writing</button>
+        <button onclick="resetCanvas()">Reset</button>
+    </div>
+
+    <script>
+        let writer = HanziWriter.create('writer', '爱', {
+            width: 300,
+            height: 300,
+            padding: 5,
+            showOutline: true,
+            strokeAnimationSpeed: 1,
+            strokeHighlightSpeed: 2,
+            delayBetweenStrokes: 500,
+            drawingColor: '#000000',
+            strokeColor: '#1976d2',
+            outlineColor: '#cccccc',
+            highlightColor: '#d32f2f'
+        });
+
+        // Auto-start animation on page load
+        writer.animateCharacter();
+
+        // Fetch character data from new HSK Level 1 JSON file
+        fetch('https://raw.githubusercontent.com/drkameleon/complete-hsk-vocabulary/master/wordlists/inclusive/new/1.json')
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(data => {
+                const select = document.getElementById('wordSelect');
+                data.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.simplified;
+                    option.setAttribute('data-pinyin', item.forms[0].transcriptions.pinyin);
+                    option.setAttribute('data-meaning', item.forms[0].meanings[0]); // Use first meaning
+                    option.textContent = `${item.simplified} (${item.forms[0].meanings[0]})`;
+                    select.appendChild(option);
+                });
+                document.getElementById('loading').style.display = 'none'; // Hide loading message
+            })
+            .catch(error => {
+                console.error('Error fetching character data:', error);
+                document.getElementById('loading').textContent = 'Failed to load characters. Please try again later.';
+            });
+
+        function updateCharacter() {
+            const select = document.getElementById('wordSelect');
+            const selectedOption = select.options[select.selectedIndex];
+            const newChar = selectedOption.value;
+            const newPinyin = selectedOption.getAttribute('data-pinyin');
+            const newMeaning = selectedOption.getAttribute('data-meaning');
+
+            // Update display
+            document.getElementById('displayChar').textContent = newChar;
+            document.getElementById('pinyin').textContent = `Pinyin: ${newPinyin}`;
+            document.getElementById('meaning').textContent = `Meaning: ${newMeaning}`;
+
+            // Update Hanzi Writer
+            writer.setCharacter(newChar);
+            writer.animateCharacter();
+        }
+
+        function startQuiz() {
+            document.getElementById('error-message').style.display = 'none';
+            document.getElementById('success-message').style.display = 'none';
+            writer.quiz({
+                onMistake: function(strokeData) {
+                    document.getElementById('error-message').style.display = 'block';
+                    console.log('Mistake on stroke ' + strokeData.strokeNum);
+                },
+                onCorrectStroke: function(strokeData) {
+                    document.getElementById('error-message').style.display = 'none';
+                },
+                onComplete: function(summaryData) {
+                    if (summaryData.totalMistakes === 0) {
+                        document.getElementById('success-message').style.display = 'block';
+                    }
+                }
+            });
+        }
+
+        function resetCanvas() {
+            writer.pauseAnimation();
+            writer.hideCharacter();
+            writer.showOutline();
+            document.getElementById('error-message').style.display = 'none';
+            document.getElementById('success-message').style.display = 'none';
+        }
+    </script>
+
+</body></html>
