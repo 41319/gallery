@@ -1,119 +1,192 @@
 <!DOCTYPE html><html lang="en"><head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Learn to Write 爱 (Love)</title>
-    <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5.0/dist/hanzi-writer.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .character {
-            font-size: 100px;
-            color: #d32f2f;
-            margin: 20px;
-        }
-        .info {
-            font-size: 24px;
-            margin: 10px;
-        }
-        #writer {
-            margin: 30px auto;
-            border: 2px solid #ccc;
-            background-color: white;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            margin: 10px;
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        #controls {
-            margin-top: 20px;
-        }
-        #error-message {
-            font-size: 18px;
-            color: #d32f2f;
-            margin-top: 15px;
-            display: none;
-        }
-        #success-message {
-            font-size: 18px;
-            color: #4caf50;
-            margin-top: 15px;
-            display: none;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learn to Write Chinese Characters</title>
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5.0/dist/hanzi-writer.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    .input-group {
+      margin: 20px auto;
+      max-width: 300px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      font-size: 18px;
+      width: 60%;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      text-align: center;
+    }
+
+    button {
+      padding: 10px 15px;
+      font-size: 16px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .character {
+      font-size: 100px;
+      color: #d32f2f;
+      margin: 20px 0;
+    }
+
+    .info {
+      font-size: 20px;
+      margin: 5px;
+    }
+
+    #writer {
+      margin: 30px auto;
+      border: 2px solid #ccc;
+      background-color: white;
+    }
+
+    #controls {
+      margin-top: 20px;
+    }
+
+    #error-message,
+    #success-message {
+      font-size: 18px;
+      display: none;
+      margin-top: 15px;
+    }
+
+    #error-message {
+      color: #d32f2f;
+    }
+
+    #success-message {
+      color: #4caf50;
+    }
+  </style>
 <meta name="apps-name" content="My Web App"></meta></head>
 <body>
-    <h1>Learn to Write 爱</h1>
-    <div class="character">爱</div>
-    <div class="info">Pinyin: ài</div>
-    <div class="info">Meaning: Love</div>
+  <h1>Learn to Write Chinese Characters</h1>
+  <p>Type a Chinese character below and click "Load Character" to begin!</p>
 
-    <h2>Stroke Order Animation &amp; Practice</h2>
-    <div id="writer" style="width: 300px; height: 300px;"></div>
-    <div id="error-message">Wrong stroke order! Try again.</div>
-    <div id="success-message">Great job! You wrote it correctly.</div>
+  <div class="input-group">
+    <input type="text" id="char-input" maxlength="1" placeholder="输入汉字">
+    <button onclick="loadCharacter()">Load Character</button>
+  </div>
 
-    <div id="controls">
-        <button onclick="writer.animateCharacter()">Show Stroke Order</button>
-        <button onclick="startQuiz()">Practice Writing</button>
-        <button onclick="resetCanvas()">Reset</button>
-    </div>
+  <div class="character" id="character-display">爱</div>
+  <div class="info" id="pinyin-display">Pinyin: ài</div>
+  <div class="info" id="meaning-display">Meaning: Love</div>
 
-    <script>
-        const writer = HanziWriter.create('writer', '爱', {
-            width: 300,
-            height: 300,
-            padding: 5,
-            showOutline: true,
-            strokeAnimationSpeed: 1,
-            strokeHighlightSpeed: 2,
-            delayBetweenStrokes: 500,
-            drawingColor: '#000000',
-            strokeColor: '#1976d2',
-            outlineColor: '#cccccc',
-            highlightColor: '#d32f2f'
-        });
+  <h2>Stroke Order Animation &amp; Practice</h2>
+  <div id="writer" style="width: 300px; height: 300px;"></div>
 
-        // Auto-start animation on page load
-        writer.animateCharacter();
+  <div id="error-message">Wrong stroke order! Try again.</div>
+  <div id="success-message">Great job! You wrote it correctly.</div>
 
-        function startQuiz() {
-            document.getElementById('error-message').style.display = 'none';
-            document.getElementById('success-message').style.display = 'none';
-            writer.quiz({
-                onMistake: function(strokeData) {
-                    document.getElementById('error-message').style.display = 'block';
-                    console.log('Mistake on stroke ' + strokeData.strokeNum);
-                },
-                onCorrectStroke: function(strokeData) {
-                    document.getElementById('error-message').style.display = 'none';
-                },
-                onComplete: function(summaryData) {
-                    if (summaryData.totalMistakes === 0) {
-                        document.getElementById('success-message').style.display = 'block';
-                    }
-                }
-            });
+  <div id="controls">
+    <button onclick="writer.animateCharacter()">Show Stroke Order</button>
+    <button onclick="startQuiz()">Practice Writing</button>
+    <button onclick="resetCanvas()">Reset</button>
+  </div>
+
+  <script>
+    let writer;
+    let defaultChar = '爱';
+
+    const dictionary = {
+      '爱': { pinyin: 'ài', meaning: 'Love' },
+      '学': { pinyin: 'xué', meaning: 'Learn' },
+      '好': { pinyin: 'hǎo', meaning: 'Good' },
+      '中': { pinyin: 'zhōng', meaning: 'Middle/China' },
+      '国': { pinyin: 'guó', meaning: 'Country' },
+      '人': { pinyin: 'rén', meaning: 'Person' },
+      '德': { pinyin: 'dé', meaning: 'Virtue' },
+      '义': { pinyin: 'yì', meaning: 'Righteousness' },
+    };
+
+    function initWriter(character) {
+      document.getElementById('writer').innerHTML = '';
+      writer = HanziWriter.create('writer', character, {
+        width: 300,
+        height: 300,
+        padding: 5,
+        showOutline: true,
+        strokeAnimationSpeed: 1,
+        strokeHighlightSpeed: 2,
+        delayBetweenStrokes: 500,
+        drawingColor: '#000000',
+        strokeColor: '#1976d2',
+        outlineColor: '#cccccc',
+        highlightColor: '#d32f2f'
+      });
+      writer.animateCharacter();
+    }
+
+    function loadCharacter() {
+      const input = document.getElementById('char-input').value.trim();
+      const char = input || defaultChar;
+
+      document.getElementById('character-display').textContent = char;
+
+      const info = dictionary[char];
+      document.getElementById('pinyin-display').textContent = `Pinyin: ${info ? info.pinyin : 'Unknown'}`;
+      document.getElementById('meaning-display').textContent = `Meaning: ${info ? info.meaning : 'Not in dictionary'}`;
+
+      document.getElementById('error-message').style.display = 'none';
+      document.getElementById('success-message').style.display = 'none';
+
+      initWriter(char);
+    }
+
+    function startQuiz() {
+      document.getElementById('error-message').style.display = 'none';
+      document.getElementById('success-message').style.display = 'none';
+
+      writer.quiz({
+        onMistake: function() {
+          document.getElementById('error-message').style.display = 'block';
+        },
+        onCorrectStroke: function() {
+          document.getElementById('error-message').style.display = 'none';
+        },
+        onComplete: function(summaryData) {
+          if (summaryData.totalMistakes === 0) {
+            document.getElementById('success-message').style.display = 'block';
+          }
         }
+      });
+    }
 
-        function resetCanvas() {
-            writer.pauseAnimation();
-            writer.hideCharacter();
-            writer.showOutline();
-            document.getElementById('error-message').style.display = 'none';
-            document.getElementById('success-message').style.display = 'none';
-        }
-    </script>
+    function resetCanvas() {
+      writer.hideCharacter();
+      writer.showOutline();
+      document.getElementById('error-message').style.display = 'none';
+      document.getElementById('success-message').style.display = 'none';
+    }
+
+    window.onload = () => {
+      loadCharacter(); // load default character
+    };
+  </script>
+
 
 </body></html>
