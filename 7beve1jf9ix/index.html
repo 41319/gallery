@@ -17,16 +17,17 @@
 
     .input-group {
       margin: 20px auto;
-      max-width: 300px;
+      max-width: 400px;
       display: flex;
       justify-content: center;
       gap: 10px;
+      flex-wrap: wrap;
     }
 
     input[type="text"] {
       padding: 10px;
       font-size: 18px;
-      width: 60%;
+      width: 150px;
       border: 1px solid #ccc;
       border-radius: 5px;
       text-align: center;
@@ -40,16 +41,11 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
+      transition: background-color 0.3s ease;
     }
 
     button:hover {
       background-color: #45a049;
-    }
-
-    .character {
-      font-size: 100px;
-      color: #d32f2f;
-      margin: 20px 0;
     }
 
     .info {
@@ -58,13 +54,11 @@
     }
 
     #writer {
-      margin: 30px auto;
+      margin: 30px auto 10px;
       border: 2px solid #ccc;
       background-color: white;
-    }
-
-    #controls {
-      margin-top: 20px;
+      width: 300px;
+      height: 300px;
     }
 
     #error-message,
@@ -81,6 +75,27 @@
     #success-message {
       color: #4caf50;
     }
+
+    #controls {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      20% { transform: translateX(-5px); }
+      40% { transform: translateX(5px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(5px); }
+      100% { transform: translateX(0); }
+    }
+
+    .shake {
+      animation: shake 0.4s ease-in-out;
+    }
   </style>
 <meta name="apps-name" content="My Web App"></meta></head>
 <body>
@@ -92,20 +107,20 @@
     <button onclick="loadCharacter()">Load Character</button>
   </div>
 
-  <div class="character" id="character-display">爱</div>
+  <h2>Stroke Order Animation &amp; Practice</h2>
+  <div id="writer"></div>
+
   <div class="info" id="pinyin-display">Pinyin: ài</div>
   <div class="info" id="meaning-display">Meaning: Love</div>
-
-  <h2>Stroke Order Animation &amp; Practice</h2>
-  <div id="writer" style="width: 300px; height: 300px;"></div>
 
   <div id="error-message">Wrong stroke order! Try again.</div>
   <div id="success-message">Great job! You wrote it correctly.</div>
 
   <div id="controls">
-    <button onclick="writer.animateCharacter()">Show Stroke Order</button>
     <button onclick="startQuiz()">Practice Writing</button>
+    <button onclick="writer.animateCharacter()">Show Stroke Order</button>
     <button onclick="resetCanvas()">Reset</button>
+    <button onclick="pronounceCharacter()">🔊 Pronounce Word</button>
   </div>
 
   <script>
@@ -138,14 +153,12 @@
         outlineColor: '#cccccc',
         highlightColor: '#d32f2f'
       });
-      writer.animateCharacter();
+      startQuiz(); // Start practice immediately
     }
 
     function loadCharacter() {
       const input = document.getElementById('char-input').value.trim();
       const char = input || defaultChar;
-
-      document.getElementById('character-display').textContent = char;
 
       const info = dictionary[char];
       document.getElementById('pinyin-display').textContent = `Pinyin: ${info ? info.pinyin : 'Unknown'}`;
@@ -162,13 +175,16 @@
       document.getElementById('success-message').style.display = 'none';
 
       writer.quiz({
-        onMistake: function() {
+        onMistake: function () {
           document.getElementById('error-message').style.display = 'block';
+          const writerBox = document.getElementById('writer');
+          writerBox.classList.add('shake');
+          setTimeout(() => writerBox.classList.remove('shake'), 400);
         },
-        onCorrectStroke: function() {
+        onCorrectStroke: function () {
           document.getElementById('error-message').style.display = 'none';
         },
-        onComplete: function(summaryData) {
+        onComplete: function (summaryData) {
           if (summaryData.totalMistakes === 0) {
             document.getElementById('success-message').style.display = 'block';
           }
@@ -183,8 +199,15 @@
       document.getElementById('success-message').style.display = 'none';
     }
 
+    function pronounceCharacter() {
+      const char = document.getElementById('char-input').value.trim() || defaultChar;
+      const utterance = new SpeechSynthesisUtterance(char);
+      utterance.lang = 'zh-CN';
+      speechSynthesis.speak(utterance);
+    }
+
     window.onload = () => {
-      loadCharacter(); // load default character
+      loadCharacter();
     };
   </script>
 
