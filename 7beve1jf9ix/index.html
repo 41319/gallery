@@ -50,14 +50,18 @@
       top: 12px;
       right: 12px;
       font-size: 22px;
-      background-color: #4dd0e1;
+      background-color: transparent;
+      border: 2px solid #4dd0e1;
       border-radius: 50%;
       width: 42px;
       height: 42px;
-      border: none;
       display: flex;
       align-items: center;
       justify-content: center;
+      cursor: pointer;
+    }
+    #pronounce-btn:hover {
+      background-color: rgba(77, 208, 225, 0.2);
     }
     .info, .history {
       font-size: 18px;
@@ -87,6 +91,10 @@
     <select id="grade-select" onchange="loadGradeChars()">
       <option value="P1">Primary 1</option>
       <option value="P2">Primary 2</option>
+      <option value="P3">Primary 3</option>
+      <option value="P4">Primary 4</option>
+      <option value="P5">Primary 5</option>
+      <option value="P6">Primary 6</option>
     </select>
     <select id="char-select"></select>
     <button onclick="loadCharacter()">🎯 Load</button>
@@ -120,7 +128,11 @@
   <script>
     const grades = {
       P1: ['人', '大', '天', '中', '口'],
-      P2: ['爱', '学', '好', '国', '义']
+      P2: ['爱', '学', '好', '国', '义'],
+      P3: ['学', '教', '学', '生', '看'],
+      P4: ['明', '学', '日', '朋', '家'],
+      P5: ['会', '重', '新', '光', '气'],
+      P6: ['名', '每', '外', '时', '国']
     };
 
     let customChars = [];
@@ -262,6 +274,7 @@
       loadGradeChars();
     };
   </script>
+
 
 
 </body></html>
