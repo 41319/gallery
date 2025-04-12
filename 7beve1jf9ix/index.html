@@ -5,60 +5,95 @@
   <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5.0/dist/hanzi-writer.min.js"></script>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
       text-align: center;
       padding: 20px;
-      background-color: #f9f9f9;
+      background-color: #fef9e7;
+      color: #333;
     }
 
     h1 {
-      margin-bottom: 10px;
+      margin-bottom: 5px;
+      color: #ff6f00;
+    }
+
+    h2 {
+      color: #3f51b5;
     }
 
     .input-group {
       margin: 20px auto;
-      max-width: 400px;
+      max-width: 600px;
       display: flex;
       justify-content: center;
+      align-items: center;
       gap: 10px;
       flex-wrap: wrap;
     }
 
-    input[type="text"] {
-      padding: 10px;
+    input, select, button {
+      padding: 12px;
       font-size: 18px;
-      width: 150px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+      border-radius: 8px;
+      border: 2px solid #ffd54f;
+    }
+
+    input[type="text"] {
+      width: 120px;
       text-align: center;
     }
 
+    select {
+      min-width: 160px;
+    }
+
     button {
-      padding: 10px 15px;
-      font-size: 16px;
-      background-color: #4caf50;
-      color: white;
+      background-color: #ffca28;
+      color: #000;
       border: none;
-      border-radius: 5px;
       cursor: pointer;
       transition: background-color 0.3s ease;
     }
 
     button:hover {
-      background-color: #45a049;
+      background-color: #ffc107;
     }
 
-    .info {
-      font-size: 20px;
-      margin: 5px;
+    #writer-container {
+      position: relative;
+      margin: 30px auto 10px;
+      width: 300px;
+      height: 300px;
+      border: 3px solid #ffd54f;
+      background-color: white;
+      border-radius: 15px;
     }
 
     #writer {
-      margin: 30px auto 10px;
-      border: 2px solid #ccc;
-      background-color: white;
-      width: 300px;
-      height: 300px;
+      width: 100%;
+      height: 100%;
+    }
+
+    #pronounce-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 22px;
+      background-color: #4dd0e1;
+      border: none;
+      border-radius: 50%;
+      width: 42px;
+      height: 42px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .info {
+      font-size: 22px;
+      margin: 5px;
     }
 
     #error-message,
@@ -66,6 +101,7 @@
       font-size: 18px;
       display: none;
       margin-top: 15px;
+      font-weight: bold;
     }
 
     #error-message {
@@ -73,24 +109,21 @@
     }
 
     #success-message {
-      color: #4caf50;
+      color: #388e3c;
     }
 
     #controls {
       margin-top: 20px;
       display: flex;
       justify-content: center;
-      gap: 10px;
+      gap: 12px;
       flex-wrap: wrap;
     }
 
     @keyframes shake {
-      0% { transform: translateX(0); }
-      20% { transform: translateX(-5px); }
-      40% { transform: translateX(5px); }
-      60% { transform: translateX(-5px); }
-      80% { transform: translateX(5px); }
-      100% { transform: translateX(0); }
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-5px); }
+      40%, 80% { transform: translateX(5px); }
     }
 
     .shake {
@@ -99,28 +132,32 @@
   </style>
 <meta name="apps-name" content="My Web App"></meta></head>
 <body>
-  <h1>Learn to Write Chinese Characters</h1>
-  <p>Type a Chinese character below and click "Load Character" to begin!</p>
+  <h1>✏️ Learn to Write Chinese Characters</h1>
+  <p>Type or choose a character, then tap "Load Character" to begin!</p>
 
   <div class="input-group">
     <input type="text" id="char-input" maxlength="1" placeholder="输入汉字">
-    <button onclick="loadCharacter()">Load Character</button>
+    <select id="char-select"></select>
+    <button onclick="loadCharacter()">🎯 Load Character</button>
   </div>
 
-  <h2>Stroke Order Animation &amp; Practice</h2>
-  <div id="writer"></div>
+  <h2>🖌️ Stroke Order Animation &amp; Practice</h2>
+
+  <div id="writer-container">
+    <div id="writer"></div>
+    <button id="pronounce-btn" onclick="pronounceCharacter()">🔊</button>
+  </div>
 
   <div class="info" id="pinyin-display">Pinyin: ài</div>
   <div class="info" id="meaning-display">Meaning: Love</div>
 
-  <div id="error-message">Wrong stroke order! Try again.</div>
-  <div id="success-message">Great job! You wrote it correctly.</div>
+  <div id="error-message">❌ Oops! Try again!</div>
+  <div id="success-message">✅ Yay! Perfect strokes!</div>
 
   <div id="controls">
-    <button onclick="startQuiz()">Practice Writing</button>
-    <button onclick="writer.animateCharacter()">Show Stroke Order</button>
-    <button onclick="resetCanvas()">Reset</button>
-    <button onclick="pronounceCharacter()">🔊 Pronounce Word</button>
+    <button onclick="startQuiz()">📝 Practise Writing</button>
+    <button onclick="writer.animateCharacter()">▶️ Show Stroke Order</button>
+    <button onclick="resetCanvas()">🧽</button>
   </div>
 
   <script>
@@ -138,6 +175,18 @@
       '义': { pinyin: 'yì', meaning: 'Righteousness' },
     };
 
+    const commonChars = '的一是在不了有和人这中大为上个国我以要他时来用们生到作地于出就分对成会可主发年动同工也能下过子说产种面而方后多定行学法所民得经十三之进着等部度家电力里如水化高自二理起小物现实加量都两体制机当使点从业本去把性好应开它合还因由其些然前外天政四日那社义事平形相全表间样与关各重新线内数正心反你明看原又么利比或但质气第向道命此变条只没结解问意建月公无系军很情者最立代想已通并提直题党程展五果料象员革位入常文总次品式活设及管特件长求老头基资边流路级少图山统接知较将组见计别她手角期根论运农指几九区强放决西被干做必战先回则任取据处队南给色光门即保治北造百规热领七海口东导器压志世金增争济阶油思术极交受联什认六共权收证改清己美再采转更单风切打白教速花带安场身车例真务具万每目至达走积示议声报斗完类八离华名确传材马县.'
+
+    function populateDropdown() {
+      const select = document.getElementById('char-select');
+      for (let char of commonChars) {
+        const option = document.createElement('option');
+        option.value = char;
+        option.textContent = char;
+        select.appendChild(option);
+      }
+    }
+
     function initWriter(character) {
       document.getElementById('writer').innerHTML = '';
       writer = HanziWriter.create('writer', character, {
@@ -149,16 +198,17 @@
         strokeHighlightSpeed: 2,
         delayBetweenStrokes: 500,
         drawingColor: '#000000',
-        strokeColor: '#1976d2',
-        outlineColor: '#cccccc',
-        highlightColor: '#d32f2f'
+        strokeColor: '#ff7043',
+        outlineColor: '#90caf9',
+        highlightColor: '#ef5350'
       });
-      startQuiz(); // Start practice immediately
+      startQuiz();
     }
 
     function loadCharacter() {
       const input = document.getElementById('char-input').value.trim();
-      const char = input || defaultChar;
+      const select = document.getElementById('char-select').value;
+      const char = input || select || defaultChar;
 
       const info = dictionary[char];
       document.getElementById('pinyin-display').textContent = `Pinyin: ${info ? info.pinyin : 'Unknown'}`;
@@ -177,7 +227,7 @@
       writer.quiz({
         onMistake: function () {
           document.getElementById('error-message').style.display = 'block';
-          const writerBox = document.getElementById('writer');
+          const writerBox = document.getElementById('writer-container');
           writerBox.classList.add('shake');
           setTimeout(() => writerBox.classList.remove('shake'), 400);
         },
@@ -200,13 +250,17 @@
     }
 
     function pronounceCharacter() {
-      const char = document.getElementById('char-input').value.trim() || defaultChar;
+      const input = document.getElementById('char-input').value.trim();
+      const select = document.getElementById('char-select').value;
+      const char = input || select || defaultChar;
+
       const utterance = new SpeechSynthesisUtterance(char);
       utterance.lang = 'zh-CN';
       speechSynthesis.speak(utterance);
     }
 
     window.onload = () => {
+      populateDropdown();
       loadCharacter();
     };
   </script>
