@@ -10,36 +10,32 @@
       color: #333;
       text-align: center;
       padding: 20px;
+      max-width: 700px;
+      margin: auto;
     }
+
     h1 { color: #ff6f00; }
     h2 { color: #3f51b5; }
 
-    .input-group {
+    .input-group, #controls {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      align-items: center;
       gap: 10px;
       margin-bottom: 20px;
     }
 
-    input, select, button {
-      padding: 12px;
-      font-size: 18px;
+    select, input, button {
+      padding: 10px;
+      font-size: 16px;
       border-radius: 8px;
       border: 2px solid #ffd54f;
-    }
-
-    input[type="text"] {
-      width: 120px;
-      text-align: center;
     }
 
     button {
       background-color: #ffca28;
       border: none;
       cursor: pointer;
-      transition: background-color 0.3s ease;
     }
 
     button:hover {
@@ -69,27 +65,21 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
     }
 
-    .info {
-      font-size: 20px;
+    .info, .history {
+      font-size: 18px;
       margin: 5px;
     }
 
-    #error-message,
-    #success-message {
-      font-size: 18px;
-      display: none;
-      margin-top: 10px;
-      font-weight: bold;
+    #history-list span {
+      margin: 0 5px;
+      cursor: pointer;
+      color: #3f51b5;
     }
 
-    #error-message { color: #d32f2f; }
-    #success-message { color: #388e3c; }
-
-    #progress-tracker {
-      margin-top: 10px;
+    #history-list span:hover {
+      text-decoration: underline;
     }
 
     @keyframes shake {
@@ -98,106 +88,82 @@
       40%, 80% { transform: translateX(5px); }
     }
 
-    .shake {
-      animation: shake 0.4s ease-in-out;
-    }
+    .shake { animation: shake 0.4s ease-in-out; }
 
-    #controls {
-      margin-top: 20px;
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
+    audio { display: none; }
   </style>
 <meta name="apps-name" content="My Web App"></meta></head>
 <body>
   <h1>✏️ Learn to Write Chinese Characters</h1>
-  <p>Choose a character, load it, and start practicing!</p>
 
   <div class="input-group">
-    <input type="text" id="char-input" maxlength="1" placeholder="输入汉字">
+    <select id="grade-select" onchange="loadGradeChars()">
+      <option value="P1">Primary 1</option>
+      <option value="P2">Primary 2</option>
+    </select>
     <select id="char-select"></select>
-    <button onclick="loadCharacter()">🎯 Load Character</button>
+    <button onclick="loadCharacter()">🎯 Load</button>
   </div>
-
-  <h2>🖌️ Stroke Order Animation &amp; Practice</h2>
 
   <div id="writer-container">
     <div id="writer"></div>
     <button id="pronounce-btn" onclick="pronounceCharacter()">🔊</button>
   </div>
 
-  <div class="info" id="pinyin-display">Pinyin: </div>
-  <div class="info" id="meaning-display">Meaning: </div>
-
-  <div id="error-message">❌ Oops! Try again!</div>
-  <div id="success-message">✅ Yay! Perfect strokes!</div>
-
-  <div id="progress-tracker">
-    <h3>📊 Progress</h3>
-    <div class="info" id="accuracy-display">Accuracy: 0%</div>
-    <div class="info" id="streak-display">Perfect Streak: 0</div>
-  </div>
+  <h2>📝 Practice</h2>
 
   <div id="controls">
-    <button onclick="startQuiz()">📝 Practise Writing</button>
-    <button onclick="writer.animateCharacter()">▶️ Show Stroke Order</button>
+    <button onclick="startQuiz()">Start</button>
+    <button onclick="writer.animateCharacter()">▶️ Stroke Order</button>
     <button onclick="resetCanvas()">🧽</button>
-    <button onclick="nextCharacter()">➡️ Next Character</button>
+    <button onclick="nextCharacter()">➡️ Next</button>
   </div>
+
+  <div class="info" id="accuracy-display">Accuracy: 0%</div>
+  <div class="info" id="streak-display">Perfect Streak: 0</div>
+  <div class="info" id="error-message" style="color:#d32f2f;display:none;">❌ Try again!</div>
+  <div class="info" id="success-message" style="color:#388e3c;display:none;">✅ Perfect!</div>
+
+  <h2>🧾 History</h2>
+  <div id="history-list" class="history"></div>
 
   <audio id="error-sound" src="https://www.soundjay.com/button/beep-07.wav"></audio>
   <audio id="success-sound" src="https://www.soundjay.com/button/beep-09.wav"></audio>
 
   <script>
-    let writer;
-    let charList = [];
-    let activeCharIndex = 0;
-    let totalStrokes = 0;
-    let correctStrokes = 0;
-    let perfectStreak = 0;
-    let currentMistakes = 0;
-
-    const dictionary = {
-      '爱': { pinyin: 'ài', meaning: 'Love' },
-      '学': { pinyin: 'xué', meaning: 'Learn' },
-      '好': { pinyin: 'hǎo', meaning: 'Good' },
-      '中': { pinyin: 'zhōng', meaning: 'Middle/China' },
-      '国': { pinyin: 'guó', meaning: 'Country' },
-      '人': { pinyin: 'rén', meaning: 'Person' },
-      '德': { pinyin: 'dé', meaning: 'Virtue' },
-      '义': { pinyin: 'yì', meaning: 'Righteousness' },
+    const grades = {
+      P1: ['人', '大', '天', '中', '口'],
+      P2: ['爱', '学', '好', '国', '义']
     };
 
-    function getQueryParams() {
-      const params = new URLSearchParams(window.location.search);
-      return {
-        chars: params.get('chars') || '爱学好中',
-        activeChar: parseInt(params.get('activeChar')) || 0
-      };
-    }
+    let charList = [];
+    let activeCharIndex = 0;
+    let writer;
+    let correctStrokes = 0;
+    let totalStrokes = 0;
+    let perfectStreak = 0;
+    const history = new Set();
 
-    function populateDropdown() {
+    function loadGradeChars() {
+      const grade = document.getElementById('grade-select').value;
+      charList = grades[grade] || [];
+      activeCharIndex = 0;
       const select = document.getElementById('char-select');
       select.innerHTML = '';
-      for (let char of charList) {
-        const option = document.createElement('option');
-        option.value = char;
-        option.textContent = char;
-        select.appendChild(option);
-      }
+      charList.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        select.appendChild(opt);
+      });
+      loadCharacter();
     }
 
-    function updateCharInfo(char) {
-      const info = dictionary[char];
-      document.getElementById('pinyin-display').textContent = `Pinyin: ${info?.pinyin || 'Unknown'}`;
-      document.getElementById('meaning-display').textContent = `Meaning: ${info?.meaning || 'Not in dictionary'}`;
-    }
-
-    function initWriter(character) {
+    function loadCharacter() {
+      const char = document.getElementById('char-select').value || charList[activeCharIndex];
+      if (!char) return;
       document.getElementById('writer').innerHTML = '';
-      writer = HanziWriter.create('writer', character, {
+      writer = HanziWriter.create('writer', char, {
         width: 300,
         height: 300,
         padding: 5,
@@ -211,31 +177,15 @@
         delayBetweenStrokes: 500
       });
       startQuiz();
-    }
-
-    function loadCharacter() {
-      const inputChar = document.getElementById('char-input').value.trim();
-      const selectedChar = document.getElementById('char-select').value;
-      const char = inputChar || selectedChar || charList[activeCharIndex];
-
-      if (!char || char.length !== 1) return;
-
-      document.getElementById('char-input').value = char;
-      document.getElementById('char-select').value = char;
-
-      updateCharInfo(char);
-      document.getElementById('error-message').style.display = 'none';
-      document.getElementById('success-message').style.display = 'none';
-      initWriter(char);
+      addToHistory(char);
     }
 
     function startQuiz() {
-      currentMistakes = 0;
       writer.quiz({
         onMistake: () => {
-          currentMistakes++;
           totalStrokes++;
           document.getElementById('error-message').style.display = 'block';
+          document.getElementById('success-message').style.display = 'none';
           document.getElementById('error-sound').play();
           document.getElementById('writer-container').classList.add('shake');
           setTimeout(() => document.getElementById('writer-container').classList.remove('shake'), 400);
@@ -249,9 +199,9 @@
         },
         onComplete: (summary) => {
           if (summary.totalMistakes === 0) {
+            perfectStreak++;
             document.getElementById('success-message').style.display = 'block';
             document.getElementById('success-sound').play();
-            perfectStreak++;
           } else {
             perfectStreak = 0;
           }
@@ -267,33 +217,38 @@
       document.getElementById('success-message').style.display = 'none';
     }
 
+    function nextCharacter() {
+      activeCharIndex = (activeCharIndex + 1) % charList.length;
+      document.getElementById('char-select').value = charList[activeCharIndex];
+      loadCharacter();
+    }
+
     function pronounceCharacter() {
-      const char = document.getElementById('char-input').value.trim() || charList[activeCharIndex];
+      const char = document.getElementById('char-select').value;
       const utterance = new SpeechSynthesisUtterance(char);
       utterance.lang = 'zh-CN';
       speechSynthesis.speak(utterance);
     }
 
     function updateProgress() {
-      const accuracy = totalStrokes > 0 ? Math.round((correctStrokes / totalStrokes) * 100) : 0;
+      const accuracy = totalStrokes ? Math.round((correctStrokes / totalStrokes) * 100) : 0;
       document.getElementById('accuracy-display').textContent = `Accuracy: ${accuracy}%`;
       document.getElementById('streak-display').textContent = `Perfect Streak: ${perfectStreak}`;
     }
 
-    function nextCharacter() {
-      activeCharIndex = (activeCharIndex + 1) % charList.length;
-      document.getElementById('char-input').value = charList[activeCharIndex];
-      loadCharacter();
+    function addToHistory(char) {
+      if (history.has(char)) return;
+      history.add(char);
+      const span = document.createElement('span');
+      span.textContent = char;
+      span.onclick = () => {
+        document.getElementById('char-select').value = char;
+        loadCharacter();
+      };
+      document.getElementById('history-list').appendChild(span);
     }
 
-    window.onload = () => {
-      const { chars, activeChar } = getQueryParams();
-      charList = chars.split('');
-      activeCharIndex = activeChar < charList.length ? activeChar : 0;
-      populateDropdown();
-      document.getElementById('char-input').value = charList[activeCharIndex];
-      loadCharacter();
-    };
+    window.onload = loadGradeChars;
   </script>
 
 
