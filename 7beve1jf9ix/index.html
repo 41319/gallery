@@ -6,29 +6,21 @@
   <style>
     body {
       font-family: 'Comic Sans MS', cursive, sans-serif;
-      text-align: center;
-      padding: 20px;
       background-color: #fef9e7;
       color: #333;
+      text-align: center;
+      padding: 20px;
     }
-
-    h1 {
-      margin-bottom: 5px;
-      color: #ff6f00;
-    }
-
-    h2 {
-      color: #3f51b5;
-    }
+    h1 { color: #ff6f00; }
+    h2 { color: #3f51b5; }
 
     .input-group {
-      margin: 20px auto;
-      max-width: 600px;
       display: flex;
+      flex-wrap: wrap;
       justify-content: center;
       align-items: center;
       gap: 10px;
-      flex-wrap: wrap;
+      margin-bottom: 20px;
     }
 
     input, select, button {
@@ -43,13 +35,8 @@
       text-align: center;
     }
 
-    select {
-      min-width: 160px;
-    }
-
     button {
       background-color: #ffca28;
-      color: #000;
       border: none;
       cursor: pointer;
       transition: background-color 0.3s ease;
@@ -60,18 +47,13 @@
     }
 
     #writer-container {
-      position: relative;
-      margin: 30px auto 10px;
+      margin: 30px auto;
       width: 300px;
       height: 300px;
-      border: 3px solid #ffd54f;
       background-color: white;
+      border: 3px solid #ffd54f;
       border-radius: 15px;
-    }
-
-    #writer {
-      width: 100%;
-      height: 100%;
+      position: relative;
     }
 
     #pronounce-btn {
@@ -80,19 +62,18 @@
       right: 12px;
       font-size: 22px;
       background-color: #4dd0e1;
-      border: none;
       border-radius: 50%;
       width: 42px;
       height: 42px;
-      cursor: pointer;
+      border: none;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
     }
 
     .info {
-      font-size: 22px;
+      font-size: 20px;
       margin: 5px;
     }
 
@@ -100,25 +81,15 @@
     #success-message {
       font-size: 18px;
       display: none;
-      margin-top: 15px;
+      margin-top: 10px;
       font-weight: bold;
     }
 
-    #error-message {
-      color: #d32f2f;
-    }
-
-    #success-message {
-      color: #388e3c;
-    }
+    #error-message { color: #d32f2f; }
+    #success-message { color: #388e3c; }
 
     #progress-tracker {
       margin-top: 10px;
-      font-size: 18px;
-    }
-
-    #progress-tracker h3 {
-      margin-bottom: 10px;
     }
 
     @keyframes shake {
@@ -130,11 +101,19 @@
     .shake {
       animation: shake 0.4s ease-in-out;
     }
+
+    #controls {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
   </style>
 <meta name="apps-name" content="My Web App"></meta></head>
 <body>
   <h1>✏️ Learn to Write Chinese Characters</h1>
-  <p>Type or choose a character, then tap "Load Character" to begin!</p>
+  <p>Choose a character, load it, and start practicing!</p>
 
   <div class="input-group">
     <input type="text" id="char-input" maxlength="1" placeholder="输入汉字">
@@ -165,6 +144,7 @@
     <button onclick="startQuiz()">📝 Practise Writing</button>
     <button onclick="writer.animateCharacter()">▶️ Show Stroke Order</button>
     <button onclick="resetCanvas()">🧽</button>
+    <button onclick="nextCharacter()">➡️ Next Character</button>
   </div>
 
   <audio id="error-sound" src="https://www.soundjay.com/button/beep-07.wav"></audio>
@@ -172,7 +152,8 @@
 
   <script>
     let writer;
-    let defaultChar = '爱';
+    let charList = [];
+    let activeCharIndex = 0;
     let totalStrokes = 0;
     let correctStrokes = 0;
     let perfectStreak = 0;
@@ -189,21 +170,29 @@
       '义': { pinyin: 'yì', meaning: 'Righteousness' },
     };
 
-    const commonChars = '的一是在不了有和人这中大为上个国我以要他时来用们生到作地于出就分对成会可主发年动同工也能下过子说产种面而方后多定行学法所民得经十三之进着等部度家电力里如水化高自二理起小物现实加量都两体制机当使点从业本去把性好应开它合还因由其些然前外天政四日那社义事平形相全表间样与关各重新线内数正心反你明看原又么利比或但质气第向道命此变条只没结解问意建月公无系军很情者最立代想已通并提直题党程展五果料象员革位入常文总次品式活设及管特件长求老头基资边流路级少图山统接知较将组见计别她手角期根论运农指几九区强放决西被干做必战先回则任取据处队南给色光门即保治北造百规热领七海口东导器压志世金增争济阶油思术极交受联什认六共权收证改清己美再采转更单风切打白教速花带安场身车例真务具万每目至达走积示议声报斗完类八离华名确传材马县.';
-
-    function getQueryParam(param) {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get(param);
+    function getQueryParams() {
+      const params = new URLSearchParams(window.location.search);
+      return {
+        chars: params.get('chars') || '爱学好中',
+        activeChar: parseInt(params.get('activeChar')) || 0
+      };
     }
 
     function populateDropdown() {
       const select = document.getElementById('char-select');
-      for (let char of commonChars) {
+      select.innerHTML = '';
+      for (let char of charList) {
         const option = document.createElement('option');
         option.value = char;
         option.textContent = char;
         select.appendChild(option);
       }
+    }
+
+    function updateCharInfo(char) {
+      const info = dictionary[char];
+      document.getElementById('pinyin-display').textContent = `Pinyin: ${info?.pinyin || 'Unknown'}`;
+      document.getElementById('meaning-display').textContent = `Meaning: ${info?.meaning || 'Not in dictionary'}`;
     }
 
     function initWriter(character) {
@@ -213,59 +202,53 @@
         height: 300,
         padding: 5,
         showOutline: true,
-        strokeAnimationSpeed: 1,
-        strokeHighlightSpeed: 2,
-        delayBetweenStrokes: 500,
         drawingColor: '#000',
         strokeColor: '#ff7043',
         outlineColor: '#90caf9',
-        highlightColor: '#ef5350'
+        highlightColor: '#ef5350',
+        strokeAnimationSpeed: 1,
+        strokeHighlightSpeed: 2,
+        delayBetweenStrokes: 500
       });
       startQuiz();
     }
 
     function loadCharacter() {
-      const input = document.getElementById('char-input').value.trim();
-      const select = document.getElementById('char-select').value;
-      const char = input || select || defaultChar;
+      const inputChar = document.getElementById('char-input').value.trim();
+      const selectedChar = document.getElementById('char-select').value;
+      const char = inputChar || selectedChar || charList[activeCharIndex];
 
-      if (char.length !== 1) return;
+      if (!char || char.length !== 1) return;
 
       document.getElementById('char-input').value = char;
       document.getElementById('char-select').value = char;
 
-      const info = dictionary[char];
-      document.getElementById('pinyin-display').textContent = `Pinyin: ${info ? info.pinyin : 'Unknown'}`;
-      document.getElementById('meaning-display').textContent = `Meaning: ${info ? info.meaning : 'Not in dictionary'}`;
-
+      updateCharInfo(char);
       document.getElementById('error-message').style.display = 'none';
       document.getElementById('success-message').style.display = 'none';
-
       initWriter(char);
     }
 
     function startQuiz() {
       currentMistakes = 0;
       writer.quiz({
-        onMistake: function () {
+        onMistake: () => {
           currentMistakes++;
           totalStrokes++;
           document.getElementById('error-message').style.display = 'block';
           document.getElementById('error-sound').play();
           document.getElementById('writer-container').classList.add('shake');
-          setTimeout(() => {
-            document.getElementById('writer-container').classList.remove('shake');
-          }, 400);
+          setTimeout(() => document.getElementById('writer-container').classList.remove('shake'), 400);
           updateProgress();
         },
-        onCorrectStroke: function () {
+        onCorrectStroke: () => {
           correctStrokes++;
           totalStrokes++;
           document.getElementById('error-message').style.display = 'none';
           updateProgress();
         },
-        onComplete: function (summaryData) {
-          if (summaryData.totalMistakes === 0) {
+        onComplete: (summary) => {
+          if (summary.totalMistakes === 0) {
             document.getElementById('success-message').style.display = 'block';
             document.getElementById('success-sound').play();
             perfectStreak++;
@@ -282,14 +265,10 @@
       writer.showOutline();
       document.getElementById('error-message').style.display = 'none';
       document.getElementById('success-message').style.display = 'none';
-      updateProgress();
     }
 
     function pronounceCharacter() {
-      const input = document.getElementById('char-input').value.trim();
-      const select = document.getElementById('char-select').value;
-      const char = input || select || defaultChar;
-
+      const char = document.getElementById('char-input').value.trim() || charList[activeCharIndex];
       const utterance = new SpeechSynthesisUtterance(char);
       utterance.lang = 'zh-CN';
       speechSynthesis.speak(utterance);
@@ -301,12 +280,18 @@
       document.getElementById('streak-display').textContent = `Perfect Streak: ${perfectStreak}`;
     }
 
+    function nextCharacter() {
+      activeCharIndex = (activeCharIndex + 1) % charList.length;
+      document.getElementById('char-input').value = charList[activeCharIndex];
+      loadCharacter();
+    }
+
     window.onload = () => {
+      const { chars, activeChar } = getQueryParams();
+      charList = chars.split('');
+      activeCharIndex = activeChar < charList.length ? activeChar : 0;
       populateDropdown();
-      const queryChar = getQueryParam('char');
-      if (queryChar && queryChar.length === 1) {
-        document.getElementById('char-input').value = queryChar;
-      }
+      document.getElementById('char-input').value = charList[activeCharIndex];
       loadCharacter();
     };
   </script>
