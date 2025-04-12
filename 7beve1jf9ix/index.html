@@ -13,10 +13,8 @@
       max-width: 700px;
       margin: auto;
     }
-
     h1 { color: #ff6f00; }
     h2 { color: #3f51b5; }
-
     .input-group, #controls {
       display: flex;
       flex-wrap: wrap;
@@ -24,24 +22,20 @@
       gap: 10px;
       margin-bottom: 20px;
     }
-
     select, input, button {
       padding: 10px;
       font-size: 16px;
       border-radius: 8px;
       border: 2px solid #ffd54f;
     }
-
     button {
       background-color: #ffca28;
       border: none;
       cursor: pointer;
     }
-
     button:hover {
       background-color: #ffc107;
     }
-
     #writer-container {
       margin: 30px auto;
       width: 300px;
@@ -51,7 +45,6 @@
       border-radius: 15px;
       position: relative;
     }
-
     #pronounce-btn {
       position: absolute;
       top: 12px;
@@ -66,30 +59,24 @@
       align-items: center;
       justify-content: center;
     }
-
     .info, .history {
       font-size: 18px;
       margin: 5px;
     }
-
     #history-list span {
       margin: 0 5px;
       cursor: pointer;
       color: #3f51b5;
     }
-
     #history-list span:hover {
       text-decoration: underline;
     }
-
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
       20%, 60% { transform: translateX(-5px); }
       40%, 80% { transform: translateX(5px); }
     }
-
     .shake { animation: shake 0.4s ease-in-out; }
-
     audio { display: none; }
   </style>
 <meta name="apps-name" content="My Web App"></meta></head>
@@ -136,6 +123,7 @@
       P2: ['爱', '学', '好', '国', '义']
     };
 
+    let customChars = [];
     let charList = [];
     let activeCharIndex = 0;
     let writer;
@@ -144,9 +132,30 @@
     let perfectStreak = 0;
     const history = new Set();
 
+    function getQueryChars() {
+      const params = new URLSearchParams(window.location.search);
+      const chars = params.get('chars');
+      return chars ? chars.split(',').filter(c => c.trim()) : [];
+    }
+
+    function injectCustomListOption() {
+      customChars = getQueryChars();
+      if (customChars.length) {
+        const gradeSelect = document.getElementById('grade-select');
+        const exists = [...gradeSelect.options].some(opt => opt.value === 'custom');
+        if (!exists) {
+          const opt = document.createElement('option');
+          opt.value = 'custom';
+          opt.textContent = 'Your List';
+          gradeSelect.appendChild(opt);
+        }
+        gradeSelect.value = 'custom';
+      }
+    }
+
     function loadGradeChars() {
       const grade = document.getElementById('grade-select').value;
-      charList = grades[grade] || [];
+      charList = (grade === 'custom') ? customChars : grades[grade] || [];
       activeCharIndex = 0;
       const select = document.getElementById('char-select');
       select.innerHTML = '';
@@ -248,7 +257,10 @@
       document.getElementById('history-list').appendChild(span);
     }
 
-    window.onload = loadGradeChars;
+    window.onload = () => {
+      injectCustomListOption();
+      loadGradeChars();
+    };
   </script>
 
 
