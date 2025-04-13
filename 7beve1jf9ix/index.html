@@ -126,10 +126,8 @@
       flex: 1 1 45%;
     }
   </style>
-<meta name="apps-name" content="My Web App"></meta></head>
-<body>
+<meta name="apps-name" content="My Web App"></meta></head><body>
   <h1>✏️ Learn to Write Chinese Characters</h1>
-
   <div class="input-group">
     <select id="grade-select" onchange="loadChars()">
       <option value="common">Common</option>
@@ -137,12 +135,10 @@
     <select id="char-select" onchange="loadCharacter()"></select>
     <button onclick="openModal()">🛠️ Custom</button>
   </div>
-
   <div id="writer-container">
     <div id="writer"></div>
     <button id="pronounce-btn" onclick="pronounceCharacter()">🔊</button>
   </div>
-
   <h2>📝 Practice</h2>
   <div id="controls">
     <button onclick="startQuiz()">Start</button>
@@ -150,17 +146,13 @@
     <button onclick="loadCharacter()">🧽</button>
     <button onclick="nextCharacter()">➡️ Next</button>
   </div>
-
   <div class="info" id="accuracy-display">Accuracy: 0%</div>
   <div class="info" id="streak-display">Perfect Streak: 0</div>
   <div class="info" id="error-message" style="color:#d32f2f;display:none;">❌ Try again!</div>
   <div class="info" id="success-message" style="color:#388e3c;display:none;">✅ Perfect!</div>
-
   <h2>🧾 History</h2>
   <div id="history-list" class="history"></div>
-
   <audio id="error-sound" src="https://www.appseek.ai/error.mp3"></audio>
-
   <div class="modal" id="customModal">
     <div class="modal-content">
       <h3>✍️ Create Custom List</h3>
@@ -173,7 +165,6 @@
       </div>
     </div>
   </div>
-
   <script>
     const defaultLists = {
       common: ['人','大','天','中','口','爱','学','好','国','义','教','生','看','明','日','朋','家','会','重','新','光','气','名','每','外','时']
@@ -252,8 +243,9 @@
             perfectStreak = 0;
           }
           document.getElementById('success-message').style.display = 'block';
-          pronounceCharacter(); // ✅ Speak character
+          pronounceCharacter();
           updateProgress();
+          setTimeout(nextCharacter, 1000);
         }
       });
     }
@@ -338,6 +330,5 @@
       loadChars();
     };
   </script>
-
 
 </body></html>
