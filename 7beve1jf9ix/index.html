@@ -14,12 +14,8 @@
       margin: auto;
     }
 
-    h1 {
+    h1, h2 {
       color: #ff6f00;
-    }
-
-    h2 {
-      color: #3f51b5;
     }
 
     .input-group,
@@ -108,7 +104,6 @@
 
     audio { display: none; }
 
-    /* Modal Styles */
     .modal {
       display: none;
       position: fixed;
@@ -131,6 +126,7 @@
 
     .modal-content textarea {
       display: block;
+      //width: 100%;
       margin: 10px auto;
       height: 100px;
       padding: 10px;
@@ -152,18 +148,12 @@
     }
   </style>
 <meta name="apps-name" content="My Web App"></meta></head>
-
 <body>
   <h1>✏️ Learn to Write Chinese Characters</h1>
 
   <div class="input-group">
-    <select id="grade-select" onchange="loadGradeChars()">
-      <option value="P1">Primary 1</option>
-      <option value="P2">Primary 2</option>
-      <option value="P3">Primary 3</option>
-      <option value="P4">Primary 4</option>
-      <option value="P5">Primary 5</option>
-      <option value="P6">Primary 6</option>
+    <select id="grade-select" onchange="loadChars()">
+      <option value="common">Common</option>
       <option value="custom">Your List</option>
     </select>
     <select id="char-select"></select>
@@ -177,7 +167,6 @@
   </div>
 
   <h2>📝 Practice</h2>
-
   <div id="controls">
     <button onclick="startQuiz()">Start</button>
     <button onclick="writer.animateCharacter()">▶️ Stroke Order</button>
@@ -209,14 +198,11 @@
   </div>
 
   <script>
-    const grades = {
-      P1: ['人', '大', '天', '中', '口'],
-      P2: ['爱', '学', '好', '国', '义'],
-      P3: ['学', '教', '学', '生', '看'],
-      P4: ['明', '学', '日', '朋', '家'],
-      P5: ['会', '重', '新', '光', '气'],
-      P6: ['名', '每', '外', '时', '国']
-    };
+    const common = [
+      '人', '大', '天', '中', '口', '爱', '学', '好', '国', '义',
+      '教', '生', '看', '明', '日', '朋', '家', '会', '重', '新',
+      '光', '气', '名', '每', '外', '时'
+    ];
 
     let customChars = [];
     let charList = [];
@@ -227,9 +213,9 @@
     let perfectStreak = 0;
     const history = new Set();
 
-    function loadGradeChars() {
+    function loadChars() {
       const grade = document.getElementById('grade-select').value;
-      charList = grade === 'custom' ? customChars : grades[grade] || [];
+      charList = grade === 'custom' ? customChars : common;
       activeCharIndex = 0;
       const select = document.getElementById('char-select');
       select.innerHTML = '';
@@ -345,10 +331,10 @@
       customChars = [...input].filter(c => c.trim());
       document.getElementById('grade-select').value = 'custom';
       closeModal();
-      loadGradeChars();
+      loadChars();
     }
 
-    window.onload = loadGradeChars;
+    window.onload = loadChars;
   </script>
 
 
