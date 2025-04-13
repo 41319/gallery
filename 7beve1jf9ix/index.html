@@ -27,9 +27,7 @@
       margin-bottom: 20px;
     }
 
-    select,
-    input,
-    button {
+    select, input, button {
       padding: 10px;
       font-size: 16px;
       border-radius: 8px;
@@ -76,8 +74,7 @@
       background-color: rgba(77, 208, 225, 0.2);
     }
 
-    .info,
-    .history {
+    .info, .history {
       font-size: 18px;
       margin: 5px;
     }
@@ -170,7 +167,7 @@
   <div id="controls">
     <button onclick="startQuiz()">Start</button>
     <button onclick="writer.animateCharacter()">▶️ Stroke Order</button>
-    <button onclick="resetCanvas()">🧽</button>
+    <button onclick="loadCharacter()">🧽</button>
     <button onclick="nextCharacter()">➡️ Next</button>
   </div>
 
@@ -182,8 +179,8 @@
   <h2>🧾 History</h2>
   <div id="history-list" class="history"></div>
 
-  <audio id="error-sound" src="https://www.soundjay.com/button/beep-07.wav"></audio>
-  <audio id="success-sound" src="https://www.soundjay.com/button/beep-09.wav"></audio>
+  <audio id="error-sound" src="https://www.appseek.ai/error.mp3"></audio>
+  <audio id="success-sound" src="https://www.appseek.ai/success.wav"></audio>
 
   <!-- Modal -->
   <div class="modal" id="customModal">
@@ -200,7 +197,9 @@
   </div>
 
   <script>
-    const defaultLists = { common: ['人','大','天','中','口','爱','学','好','国','义','教','生','看','明','日','朋','家','会','重','新','光','气','名','每','外','时'] };
+    const defaultLists = {
+      common: ['人','大','天','中','口','爱','学','好','国','义','教','生','看','明','日','朋','家','会','重','新','光','气','名','每','外','时']
+    };
     let charLists = JSON.parse(localStorage.getItem('charLists')) || defaultLists;
     let currentListName = 'common';
     let activeCharIndex = 0;
@@ -229,6 +228,11 @@
       const char = document.getElementById('char-select').value || charLists[currentListName][activeCharIndex];
       if (!char) return;
       document.getElementById('writer').innerHTML = '';
+      correctStrokes = 0;
+      totalStrokes = 0;
+      document.getElementById('error-message').style.display = 'none';
+      document.getElementById('success-message').style.display = 'none';
+      updateProgress();
       writer = HanziWriter.create('writer', char, {
         width: 300,
         height: 300,
@@ -274,13 +278,6 @@
           updateProgress();
         }
       });
-    }
-
-    function resetCanvas() {
-      writer.hideCharacter();
-      writer.showOutline();
-      document.getElementById('error-message').style.display = 'none';
-      document.getElementById('success-message').style.display = 'none';
     }
 
     function nextCharacter() {
