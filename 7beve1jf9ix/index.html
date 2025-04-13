@@ -14,37 +14,30 @@
       max-width: 700px;
       margin: auto;
     }
-
     h1, h2 {
       color: #ff6f00;
     }
-
-    .input-group,
-    #controls {
+    .input-group, #controls {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       gap: 10px;
       margin-bottom: 20px;
     }
-
     select, input, button {
       padding: 10px;
       font-size: 16px;
       border-radius: 8px;
       border: 2px solid #ffd54f;
     }
-
     button {
       background-color: #ffca28;
       border: none;
       cursor: pointer;
     }
-
     button:hover {
       background-color: #ffc107;
     }
-
     #writer-container {
       margin: 30px auto;
       width: 300px;
@@ -54,7 +47,6 @@
       border-radius: 15px;
       position: relative;
     }
-
     #pronounce-btn {
       position: absolute;
       top: 12px;
@@ -70,38 +62,30 @@
       justify-content: center;
       cursor: pointer;
     }
-
     #pronounce-btn:hover {
       background-color: rgba(77, 208, 225, 0.2);
     }
-
     .info, .history {
       font-size: 18px;
       margin: 5px;
     }
-
     #history-list span {
       margin: 0 5px;
       cursor: pointer;
       color: #3f51b5;
     }
-
     #history-list span:hover {
       text-decoration: underline;
     }
-
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
       20%, 60% { transform: translateX(-5px); }
       40%, 80% { transform: translateX(5px); }
     }
-
     .shake {
       animation: shake 0.4s ease-in-out;
     }
-
     audio { display: none; }
-
     .modal {
       display: none;
       position: fixed;
@@ -110,7 +94,6 @@
       width: 100%; height: 100%;
       background-color: rgba(0, 0, 0, 0.5);
     }
-
     .modal-content {
       background-color: #fff8e1;
       margin: 100px auto;
@@ -121,7 +104,6 @@
       max-width: 400px;
       text-align: center;
     }
-
     .modal-content textarea,
     .modal-content input[type="text"] {
       display: block;
@@ -133,7 +115,6 @@
       border-radius: 8px;
       border: 2px solid #ffd54f;
     }
-
     .modal-buttons {
       display: flex;
       justify-content: center;
@@ -141,7 +122,6 @@
       margin-top: 10px;
       flex-wrap: wrap;
     }
-
     .modal-buttons button {
       flex: 1 1 45%;
     }
@@ -180,9 +160,7 @@
   <div id="history-list" class="history"></div>
 
   <audio id="error-sound" src="https://www.appseek.ai/error.mp3"></audio>
-  <audio id="success-sound" src="https://www.appseek.ai/success.wav"></audio>
 
-  <!-- Modal -->
   <div class="modal" id="customModal">
     <div class="modal-content">
       <h3>✍️ Create Custom List</h3>
@@ -270,16 +248,11 @@
         onComplete: (summary) => {
           if (summary.totalMistakes === 0) {
             perfectStreak++;
-            document.getElementById('success-message').style.display = 'block';
-            document.getElementById('success-sound').play();
           } else {
             perfectStreak = 0;
           }
-
-          // Ensure success sound is played even with mistakes
           document.getElementById('success-message').style.display = 'block';
-          document.getElementById('success-sound').play();
-
+          pronounceCharacter(); // ✅ Speak character
           updateProgress();
         }
       });
