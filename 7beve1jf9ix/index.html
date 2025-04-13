@@ -275,6 +275,11 @@
           } else {
             perfectStreak = 0;
           }
+
+          // Ensure success sound is played even with mistakes
+          document.getElementById('success-message').style.display = 'block';
+          document.getElementById('success-sound').play();
+
           updateProgress();
         }
       });
