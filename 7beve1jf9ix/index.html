@@ -39,13 +39,17 @@
       background-color: #ffc107;
     }
     #writer-container {
-      margin: 30px auto;
+      margin: 30px auto 10px;
       width: 300px;
-      height: 300px;
+      height: 330px;
       background-color: white;
       border: 3px solid #ffd54f;
       border-radius: 15px;
       position: relative;
+    }
+    #writer {
+      width: 100%;
+      height: 300px;
     }
     #pronounce-btn {
       position: absolute;
@@ -64,6 +68,11 @@
     }
     #pronounce-btn:hover {
       background-color: rgba(77, 208, 225, 0.2);
+    }
+    #pinyin-display {
+      font-size: 22px;
+      margin-top: 6px;
+      color: #5d4037;
     }
     .info, .history {
       font-size: 18px;
@@ -139,6 +148,7 @@
     <div id="writer"></div>
     <button id="pronounce-btn" onclick="pronounceCharacter()">🔊</button>
   </div>
+  <div id="pinyin-display"></div>
   <h2>📝 Practice</h2>
   <div id="controls">
     <button onclick="startQuiz()">Start</button>
@@ -169,6 +179,14 @@
     const defaultLists = {
       common: ['人','大','天','中','口','爱','学','好','国','义','教','生','看','明','日','朋','家','会','重','新','光','气','名','每','外','时']
     };
+
+    const pinyinMap = {
+      '人': 'rén', '大': 'dà', '天': 'tiān', '中': 'zhōng', '口': 'kǒu', '爱': 'ài', '学': 'xué',
+      '好': 'hǎo', '国': 'guó', '义': 'yì', '教': 'jiào', '生': 'shēng', '看': 'kàn', '明': 'míng',
+      '日': 'rì', '朋': 'péng', '家': 'jiā', '会': 'huì', '重': 'zhòng', '新': 'xīn', '光': 'guāng',
+      '气': 'qì', '名': 'míng', '每': 'měi', '外': 'wài', '时': 'shí'
+    };
+
     let charLists = JSON.parse(localStorage.getItem('charLists')) || defaultLists;
     let currentListName = 'common';
     let activeCharIndex = 0;
@@ -202,6 +220,7 @@
       document.getElementById('error-message').style.display = 'none';
       document.getElementById('success-message').style.display = 'none';
       updateProgress();
+      document.getElementById('pinyin-display').textContent = pinyinMap[char] || '';
       writer = HanziWriter.create('writer', char, {
         width: 300,
         height: 300,
