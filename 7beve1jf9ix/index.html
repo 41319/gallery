@@ -135,7 +135,8 @@
       flex: 1 1 45%;
     }
   </style>
-<meta name="apps-name" content="My Web App"></meta></head><body>
+<meta name="apps-name" content="My Web App"></meta></head>
+<body>
   <h1>✏️ Learn to Write Chinese Characters</h1>
   <div class="input-group">
     <select id="grade-select" onchange="loadChars()">
@@ -155,6 +156,7 @@
     <button onclick="writer.animateCharacter()">▶️ Stroke Order</button>
     <button onclick="loadCharacter()">🧽</button>
     <button onclick="nextCharacter()">➡️ Next</button>
+    <button id="auto-next-btn" onclick="toggleAutoNext()">⏩ Auto Next: OFF</button>
   </div>
   <div class="info" id="accuracy-display">Accuracy: 0%</div>
   <div class="info" id="streak-display">Perfect Streak: 0</div>
@@ -194,6 +196,7 @@
     let correctStrokes = 0;
     let totalStrokes = 0;
     let perfectStreak = 0;
+    let autoNext = false;
     const history = new Set();
 
     function loadChars() {
@@ -264,7 +267,7 @@
           document.getElementById('success-message').style.display = 'block';
           pronounceCharacter();
           updateProgress();
-          setTimeout(nextCharacter, 1000);
+          if (autoNext) setTimeout(nextCharacter, 1000);
         }
       });
     }
@@ -344,10 +347,17 @@
       });
     }
 
+    function toggleAutoNext() {
+      autoNext = !autoNext;
+      document.getElementById('auto-next-btn').textContent = `⏩ Auto Next: ${autoNext ? 'ON' : 'OFF'}`;
+    }
+
     window.onload = () => {
       updateGradeSelect();
       loadChars();
+      document.getElementById('auto-next-btn').textContent = `⏩ Auto Next: ${autoNext ? 'ON' : 'OFF'}`;
     };
   </script>
+
 
 </body></html>
