@@ -152,9 +152,8 @@
   <div id="pinyin-display"></div>
   <h2>📝 Practice</h2>
   <div id="controls">
-    <button onclick="startQuiz()">Start</button>
     <button onclick="writer.animateCharacter()">▶️ Stroke Order</button>
-    <button onclick="loadCharacter()">🧽</button>
+    <button onclick="loadCharacter()">🔄</button>
     <button onclick="nextCharacter()">➡️ Next</button>
     <button id="auto-next-btn" onclick="toggleAutoNext()">⏩ Auto Next: OFF</button>
   </div>
@@ -358,6 +357,5 @@
       document.getElementById('auto-next-btn').textContent = `⏩ Auto Next: ${autoNext ? 'ON' : 'OFF'}`;
     };
   </script>
-
 
 </body></html>
