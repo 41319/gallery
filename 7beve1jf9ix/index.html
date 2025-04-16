@@ -14,9 +14,7 @@
       max-width: 700px;
       margin: auto;
     }
-    h1, h2 {
-      color: #ff6f00;
-    }
+    h1, h2 { color: #ff6f00; }
     .input-group, #controls {
       display: flex;
       flex-wrap: wrap;
@@ -47,10 +45,7 @@
       border-radius: 15px;
       position: relative;
     }
-    #writer {
-      width: 100%;
-      height: 300px;
-    }
+    #writer { width: 100%; height: 300px; }
     #pronounce-btn {
       position: absolute;
       top: 12px;
@@ -66,34 +61,22 @@
       justify-content: center;
       cursor: pointer;
     }
-    #pronounce-btn:hover {
-      background-color: rgba(77, 208, 225, 0.2);
-    }
+    #pronounce-btn:hover { background-color: rgba(77, 208, 225, 0.2); }
     #pinyin-display {
       font-size: 22px;
       margin-top: 6px;
       color: #5d4037;
     }
-    .info, .history {
+    .info {
       font-size: 18px;
       margin: 5px;
-    }
-    #history-list span {
-      margin: 0 5px;
-      cursor: pointer;
-      color: #3f51b5;
-    }
-    #history-list span:hover {
-      text-decoration: underline;
     }
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
       20%, 60% { transform: translateX(-5px); }
       40%, 80% { transform: translateX(5px); }
     }
-    .shake {
-      animation: shake 0.4s ease-in-out;
-    }
+    .shake { animation: shake 0.4s ease-in-out; }
     audio { display: none; }
     .modal {
       display: none;
@@ -154,6 +137,7 @@
   <div id="controls">
     <button onclick="writer.animateCharacter()">▶️ Stroke Order</button>
     <button onclick="loadCharacter()">🔄</button>
+    <button onclick="prevCharacter()">⬅️ Back</button>
     <button onclick="nextCharacter()">➡️ Next</button>
     <button id="auto-next-btn" onclick="toggleAutoNext()">⏩ Auto Next: OFF</button>
   </div>
@@ -161,8 +145,7 @@
   <div class="info" id="streak-display">Perfect Streak: 0</div>
   <div class="info" id="error-message" style="color:#d32f2f;display:none;">❌ Try again!</div>
   <div class="info" id="success-message" style="color:#388e3c;display:none;">✅ Perfect!</div>
-  <h2>🧾 History</h2>
-  <div id="history-list" class="history"></div>
+
   <audio id="error-sound" src="https://www.appseek.ai/error.mp3"></audio>
   <div class="modal" id="customModal">
     <div class="modal-content">
@@ -180,14 +163,12 @@
     const defaultLists = {
       common: ['人','大','天','中','口','爱','学','好','国','义','教','生','看','明','日','朋','家','会','重','新','光','气','名','每','外','时']
     };
-
     const pinyinMap = {
-      '人': 'rén', '大': 'dà', '天': 'tiān', '中': 'zhōng', '口': 'kǒu', '爱': 'ài', '学': 'xué',
-      '好': 'hǎo', '国': 'guó', '义': 'yì', '教': 'jiào', '生': 'shēng', '看': 'kàn', '明': 'míng',
-      '日': 'rì', '朋': 'péng', '家': 'jiā', '会': 'huì', '重': 'zhòng', '新': 'xīn', '光': 'guāng',
-      '气': 'qì', '名': 'míng', '每': 'měi', '外': 'wài', '时': 'shí'
+      '人': 'rén','大': 'dà','天': 'tiān','中': 'zhōng','口': 'kǒu','爱': 'ài','学': 'xué','好': 'hǎo',
+      '国': 'guó','义': 'yì','教': 'jiào','生': 'shēng','看': 'kàn','明': 'míng','日': 'rì','朋': 'péng',
+      '家': 'jiā','会': 'huì','重': 'zhòng','新': 'xīn','光': 'guāng','气': 'qì','名': 'míng','每': 'měi',
+      '外': 'wài','时': 'shí'
     };
-
     let charLists = JSON.parse(localStorage.getItem('charLists')) || defaultLists;
     let currentListName = 'common';
     let activeCharIndex = 0;
@@ -196,7 +177,6 @@
     let totalStrokes = 0;
     let perfectStreak = 0;
     let autoNext = false;
-    const history = new Set();
 
     function loadChars() {
       currentListName = document.getElementById('grade-select').value;
@@ -237,7 +217,6 @@
         delayBetweenStrokes: 500
       });
       startQuiz();
-      addToHistory(char);
     }
 
     function startQuiz() {
@@ -258,11 +237,8 @@
           updateProgress();
         },
         onComplete: (summary) => {
-          if (summary.totalMistakes === 0) {
-            perfectStreak++;
-          } else {
-            perfectStreak = 0;
-          }
+          if (summary.totalMistakes === 0) perfectStreak++;
+          else perfectStreak = 0;
           document.getElementById('success-message').style.display = 'block';
           pronounceCharacter();
           updateProgress();
@@ -273,6 +249,12 @@
 
     function nextCharacter() {
       activeCharIndex = (activeCharIndex + 1) % charLists[currentListName].length;
+      document.getElementById('char-select').value = charLists[currentListName][activeCharIndex];
+      loadCharacter();
+    }
+
+    function prevCharacter() {
+      activeCharIndex = (activeCharIndex - 1 + charLists[currentListName].length) % charLists[currentListName].length;
       document.getElementById('char-select').value = charLists[currentListName][activeCharIndex];
       loadCharacter();
     }
@@ -288,18 +270,6 @@
       const accuracy = totalStrokes ? Math.round((correctStrokes / totalStrokes) * 100) : 0;
       document.getElementById('accuracy-display').textContent = `Accuracy: ${accuracy}%`;
       document.getElementById('streak-display').textContent = `Perfect Streak: ${perfectStreak}`;
-    }
-
-    function addToHistory(char) {
-      if (history.has(char)) return;
-      history.add(char);
-      const span = document.createElement('span');
-      span.textContent = char;
-      span.onclick = () => {
-        document.getElementById('char-select').value = char;
-        loadCharacter();
-      };
-      document.getElementById('history-list').appendChild(span);
     }
 
     function openModal() {
