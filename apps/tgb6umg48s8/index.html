@@ -1,0 +1,216 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Character Hanzi Fanning Strokes</title>
+    <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@2.2/dist/hanzi-writer.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .input-container {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        #character-input {
+            font-size: 18px;
+            padding: 8px;
+            flex-grow: 1;
+        }
+        button {
+            padding: 8px 16px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #target {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            margin: 20px 0;
+            padding: 20px;
+        }
+        .character-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            page-break-inside: avoid;
+        }
+        .character-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .strokes-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .instructions {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f8f8f8;
+            border-radius: 5px;
+        }
+        .loading {
+            color: #666;
+            font-style: italic;
+        }
+        .error {
+            color: #d32f2f;
+        }
+        
+        @media print {
+            .input-container, .instructions {
+                display: none;
+            }
+            #target {
+                padding: 0;
+                border: none;
+            }
+            .character-title {
+                font-size: 16px;
+            }
+        }
+    </style>
+<meta name="apps-name" content="My Web App"></meta></head>
+<body>
+    <h1>Multi-Character Hanzi Fanning Strokes</h1>
+    
+    <div class="input-container">
+        <input type="text" id="character-input" placeholder="Enter Chinese characters (e.g., 你好世界)">
+        <button id="render-btn">Render Fanning Strokes</button>
+    </div>
+    
+    <div id="target"></div>
+    
+    <div class="instructions">
+        <p>Enter Chinese characters (words or phrases) in the text box and click "Render Fanning Strokes" to see each character's strokes progressively added.</p>
+        <p>When printing, only the stroke sequences will be shown.</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const input = document.getElementById('character-input');
+            const renderBtn = document.getElementById('render-btn');
+            const target = document.getElementById('target');
+            
+            function renderFanningStrokes(targetElement, strokes, options = {}) {
+                const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svg.style.width = options.size || '75px';
+                svg.style.height = options.size || '75px';
+                svg.style.border = '1px solid #EEE';
+                targetElement.appendChild(svg);
+                
+                const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                
+                // Set the transform property for proper scaling
+                const size = parseInt(options.size || '75');
+                const transformData = HanziWriter.getScalingTransform(size, size);
+                group.setAttributeNS(null, 'transform', transformData.transform);
+                svg.appendChild(group);
+                
+                strokes.forEach(function(strokePath) {
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    path.setAttributeNS(null, 'd', strokePath);
+                    path.style.fill = '#333'; // Consistent dark color for all strokes
+                    group.appendChild(path);
+                });
+            }
+            
+            async function renderCharacters() {
+                const text = input.value.trim();
+                if (!text) return;
+                
+                // Clear previous renders
+                target.innerHTML = '<div class="loading">Loading character data...</div>';
+                
+                try {
+                    // Create an array of unique characters to load data for
+                    const uniqueChars = [...new Set(text.split(''))];
+                    
+                    // Load data for all characters first
+                    const charDataMap = new Map();
+                    await Promise.all(uniqueChars.map(async char => {
+                        try {
+                            const data = await HanziWriter.loadCharacterData(char);
+                            charDataMap.set(char, data);
+                        } catch (error) {
+                            console.error(`Failed to load data for character: ${char}`);
+                            charDataMap.set(char, null);
+                        }
+                    }));
+                    
+                    // Clear loading message
+                    target.innerHTML = '';
+                    
+                    // Render each character in the input text
+                    for (const char of text) {
+                        const charData = charDataMap.get(char);
+                        
+                        if (!charData) {
+                            target.innerHTML += `<div class="error">No data available for character: ${char}</div>`;
+                            continue;
+                        }
+                        
+                        // Create container for this character
+                        const charContainer = document.createElement('div');
+                        charContainer.className = 'character-container';
+                        target.appendChild(charContainer);
+                        
+                        // Add character title
+                        const title = document.createElement('div');
+                        title.className = 'character-title';
+                        title.textContent = `Character: ${char} (${charData.strokes.length} strokes)`;
+                        charContainer.appendChild(title);
+                        
+                        // Create strokes container
+                        const strokesContainer = document.createElement('div');
+                        strokesContainer.className = 'strokes-container';
+                        charContainer.appendChild(strokesContainer);
+                        
+                        // Render progressive strokes
+                        for (let i = 0; i < charData.strokes.length; i++) {
+                            const strokesPortion = charData.strokes.slice(0, i + 1);
+                            renderFanningStrokes(strokesContainer, strokesPortion, {
+                                size: '60px'
+                            });
+                        }
+                    }
+                } catch (error) {
+                    console.error("Error:", error);
+                    target.innerHTML = '<div class="error">Error loading character data. Please try different characters.</div>';
+                }
+            }
+            
+            // Render when button is clicked
+            renderBtn.addEventListener('click', renderCharacters);
+            
+            // Also render when Enter key is pressed in the input
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    renderCharacters();
+                }
+            });
+            
+            // Focus the input field on page load
+            input.focus();
+            
+            // Load example on first visit
+            if (!localStorage.getItem('hanziDemoVisited')) {
+                input.value = '你好';
+                localStorage.setItem('hanziDemoVisited', 'true');
+                renderBtn.click();
+            }
+        });
+    </script>
+
+</body></html>
