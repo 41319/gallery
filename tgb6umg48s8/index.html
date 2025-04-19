@@ -37,12 +37,12 @@
             gap: 30px;
             margin: 20px 0;
             padding: 20px;
-            border: 1px solid #eee;
         }
         .character-container {
             display: flex;
             flex-direction: column;
             gap: 10px;
+            page-break-inside: avoid;
         }
         .character-title {
             font-size: 18px;
@@ -67,6 +67,19 @@
         .error {
             color: #d32f2f;
         }
+        
+        @media print {
+            .input-container, .instructions {
+                display: none;
+            }
+            #target {
+                padding: 0;
+                border: none;
+            }
+            .character-title {
+                font-size: 16px;
+            }
+        }
     </style>
 <meta name="apps-name" content="My Web App"></meta></head>
 <body>
@@ -81,7 +94,7 @@
     
     <div class="instructions">
         <p>Enter Chinese characters (words or phrases) in the text box and click "Render Fanning Strokes" to see each character's strokes progressively added.</p>
-        <p>Example phrases to try: 你好, 我爱你, 汉字书写, 中国功夫</p>
+        <p>When printing, only the stroke sequences will be shown.</p>
     </div>
 
     <script>
@@ -108,10 +121,7 @@
                 strokes.forEach(function(strokePath) {
                     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                     path.setAttributeNS(null, 'd', strokePath);
-                    path.style.fill = options.color || '#555';
-                    if (options.highlightLast && strokePath === strokes[strokes.length-1]) {
-                        path.style.fill = '#d32f2f'; // Highlight last stroke
-                    }
+                    path.style.fill = '#333'; // Consistent dark color for all strokes
                     group.appendChild(path);
                 });
             }
@@ -159,7 +169,7 @@
                         // Add character title
                         const title = document.createElement('div');
                         title.className = 'character-title';
-                        title.textContent = `Character: ${char}`;
+                        title.textContent = `Character: ${char} (${charData.strokes.length} strokes)`;
                         charContainer.appendChild(title);
                         
                         // Create strokes container
@@ -171,8 +181,7 @@
                         for (let i = 0; i < charData.strokes.length; i++) {
                             const strokesPortion = charData.strokes.slice(0, i + 1);
                             renderFanningStrokes(strokesContainer, strokesPortion, {
-                                size: '60px',
-                                highlightLast: true
+                                size: '60px'
                             });
                         }
                     }
