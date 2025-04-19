@@ -1,0 +1,105 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hanzi Writer Column App</title>
+  <script src="https://unpkg.com/hanzi-writer@3.3.0/dist/hanzi-writer.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding-top: 40px;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      color: #1976d2;
+      margin-bottom: 20px;
+    }
+
+    .input-section {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      font-size: 16px;
+      width: 250px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 10px 16px;
+      font-size: 16px;
+      background-color: #1976d2;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #135ca6;
+    }
+
+    .hanzi-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .character-wrapper {
+      width: 100px;
+      height: 100px;
+    }
+  </style>
+<meta name="apps-name" content="My Web App"></meta></head>
+<body>
+  <h1>Write Chinese Characters</h1>
+  <div class="input-section">
+    <input type="text" id="inputText" placeholder="Enter Chinese characters">
+    <button onclick="renderCharacters()">Draw</button>
+  </div>
+  <div class="hanzi-container" id="hanziContainer"></div>
+
+  <script>
+    function renderCharacters() {
+      const container = document.getElementById('hanziContainer');
+      container.innerHTML = '';
+      const input = document.getElementById('inputText').value.trim();
+
+      for (const char of input) {
+        if (/[\u4e00-\u9fff]/.test(char)) { // Only allow Hanzi characters
+          const wrapper = document.createElement('div');
+          wrapper.className = 'character-wrapper';
+          container.appendChild(wrapper);
+
+          const writer = HanziWriter.create(wrapper, char, {
+            width: 100,
+            height: 100,
+            padding: 5,
+            strokeAnimationSpeed: 1,
+            delayBetweenStrokes: 100,
+            showOutline: true,
+            showCharacter: false
+          });
+          writer.animateCharacter();
+        }
+      }
+    }
+  </script>
+
+
+</body></html>
