@@ -1,122 +1,239 @@
 <!DOCTYPE html><html lang="en"><head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Printable Hanzi Writer</title>
+  <title>Advanced Hanzi Writer</title>
   <script src="https://unpkg.com/hanzi-writer@3.3.0/dist/hanzi-writer.min.js"></script>
   <style>
+    :root {
+      --primary-color: #1976d2;
+      --primary-dark: #135ca6;
+      --error-color: #d32f2f;
+      --success-color: #388e3c;
+      --text-color: #333;
+      --light-gray: #f5f5f5;
+      --medium-gray: #e0e0e0;
+      --dark-gray: #757575;
+    }
+    
     body {
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--light-gray);
       margin: 0;
       padding: 20px;
       box-sizing: border-box;
-      text-align: center;
-    }
-
-    h1 {
-      color: #1976d2;
-      margin-bottom: 20px;
+      color: var(--text-color);
+      line-height: 1.6;
     }
 
     .container {
-      max-width: 800px;
+      max-width: 1000px;
       margin: 0 auto;
       background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      color: var(--primary-color);
+      margin-bottom: 25px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .control-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    @media (max-width: 768px) {
+      .control-panel {
+        grid-template-columns: 1fr;
+      }
     }
 
     .input-section {
-      margin-bottom: 30px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 15px;
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid var(--medium-gray);
+    }
+
+    .options-section {
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid var(--medium-gray);
+    }
+
+    .section-title {
+      font-size: 18px;
+      margin-top: 0;
+      margin-bottom: 15px;
+      color: var(--primary-color);
+      font-weight: 500;
     }
 
     .input-group {
-      display: flex;
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    input[type="text"], 
+    input[type="number"],
+    select {
       width: 100%;
-      max-width: 500px;
+      padding: 10px;
+      font-size: 15px;
+      border: 1px solid var(--medium-gray);
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+
+    input[type="color"] {
+      width: 50px;
+      height: 30px;
+      padding: 2px;
+      border: 1px solid var(--medium-gray);
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .color-picker {
+      display: flex;
+      align-items: center;
       gap: 10px;
     }
 
-    input[type="text"] {
-      padding: 12px;
-      font-size: 16px;
-      flex: 1;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      transition: border-color 0.3s;
-    }
-
-    input[type="text"]:focus {
-      outline: none;
-      border-color: #1976d2;
+    .color-label {
+      min-width: 100px;
     }
 
     button {
-      padding: 12px 20px;
-      font-size: 16px;
-      background-color: #1976d2;
+      padding: 10px 16px;
+      font-size: 15px;
+      background-color: var(--primary-color);
       color: white;
       border: none;
       border-radius: 6px;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: background-color 0.2s;
+      font-weight: 500;
     }
 
     button:hover {
-      background-color: #135ca6;
+      background-color: var(--primary-dark);
+    }
+
+    button.secondary {
+      background-color: var(--medium-gray);
+      color: var(--text-color);
+    }
+
+    button.secondary:hover {
+      background-color: #d0d0d0;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
     }
 
     .loading {
       display: none;
-      margin: 20px 0;
-      color: #666;
+      text-align: center;
+      padding: 20px;
+      color: var(--dark-gray);
     }
 
     .error {
-      color: #d32f2f;
+      color: var(--error-color);
       margin: 10px 0;
+      padding: 10px;
+      background: #fdecea;
+      border-radius: 4px;
       display: none;
+      font-size: 14px;
     }
 
-    .character-print-block {
-      page-break-after: always;
+    .success {
+      color: var(--success-color);
+      margin: 10px 0;
+      padding: 10px;
+      background: #e8f5e9;
+      border-radius: 4px;
+      display: none;
+      font-size: 14px;
+    }
+
+    .character-display {
+      margin-top: 30px;
+    }
+
+    .character-container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin: 30px 0;
+      margin-bottom: 30px;
       padding: 20px;
       background: white;
       border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
 
     .character-title {
-      font-size: 24px;
+      font-size: 22px;
       margin-bottom: 10px;
-      color: #333;
+      color: var(--text-color);
+      font-weight: 500;
     }
 
-    .character-grid {
+    .pinyin {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: var(--dark-gray);
+    }
+
+    .main-character {
+      width: 150px;
+      height: 150px;
+      margin: 10px 0;
+      border: 1px solid var(--medium-gray);
+      border-radius: 4px;
+      background: #fafafa;
+    }
+
+    .strokes-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 15px;
       width: 100%;
-      margin: 20px 0;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .strokes-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
     }
 
     .stroke-cell {
+      position: relative;
       width: 100%;
       aspect-ratio: 1/1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border: 1px solid #eee;
+      border: 1px solid var(--medium-gray);
       border-radius: 4px;
       background: #fafafa;
+      overflow: hidden;
     }
 
     .stroke-number {
@@ -132,204 +249,601 @@
       justify-content: center;
       align-items: center;
       font-size: 12px;
+      z-index: 10;
     }
 
-    .pinyin {
-      font-size: 18px;
-      margin: 10px 0;
-      color: #666;
-    }
-
-    .cell-container {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-
-    .print-options {
-      margin: 15px 0;
+    .action-buttons {
       display: flex;
+      gap: 10px;
+      margin-top: 20px;
       justify-content: center;
-      gap: 15px;
+      flex-wrap: wrap;
     }
 
-    @media print {
-      .container, .input-section, h1, button, .print-options {
-        display: none;
-      }
-      .character-print-block {
-        margin: 0;
-        padding: 0;
-        page-break-inside: avoid;
-      }
+    .quiz-controls {
+      display: none;
+      margin-top: 20px;
+      text-align: center;
     }
 
-    @media (max-width: 600px) {
-      .character-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-      .input-group {
-        flex-direction: column;
-      }
+    .quiz-feedback {
+      margin-top: 15px;
+      font-weight: 500;
+    }
+
+    .quiz-correct {
+      color: var(--success-color);
+    }
+
+    .quiz-mistake {
+      color: var(--error-color);
+    }
+
+    .tab-container {
+      margin-top: 20px;
+    }
+
+    .tab-buttons {
+      display: flex;
+      border-bottom: 1px solid var(--medium-gray);
+      margin-bottom: 20px;
+    }
+
+    .tab-button {
+      padding: 10px 20px;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      cursor: pointer;
+      font-weight: 500;
+      color: var(--dark-gray);
+      transition: all 0.2s;
+    }
+
+    .tab-button.active {
+      color: var(--primary-color);
+      border-bottom-color: var(--primary-color);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .option-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .option-label {
+      min-width: 200px;
+      font-size: 14px;
+    }
+
+    .option-control {
+      flex: 1;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
     }
   </style>
 <meta name="apps-name" content="My Web App"></meta></head>
 <body>
   <div class="container">
-    <h1>Printable Stroke-by-Stroke Hanzi</h1>
+    <h1>Advanced Hanzi Writer</h1>
     
-    <div class="input-section">
-      <div class="input-group">
-        <input type="text" id="inputText" placeholder="Enter Chinese characters (e.g. 你好)" value="汉">
-        <button onclick="renderCharacters()">Generate</button>
+    <div class="control-panel">
+      <div class="input-section">
+        <h3 class="section-title">Character Settings</h3>
+        
+        <div class="input-group">
+          <label for="inputCharacter">Chinese Character(s)</label>
+          <input type="text" id="inputCharacter" placeholder="Enter character(s) to practice" value="爱">
+        </div>
+        
+        <div class="input-group">
+          <label for="charWidth">Width (px)</label>
+          <input type="number" id="charWidth" value="150" min="50" max="300">
+        </div>
+        
+        <div class="input-group">
+          <label for="charHeight">Height (px)</label>
+          <input type="number" id="charHeight" value="150" min="50" max="300">
+        </div>
+        
+        <div class="input-group">
+          <label for="charPadding">Padding (px)</label>
+          <input type="number" id="charPadding" value="20" min="0" max="50">
+        </div>
+        
+        <div class="button-group">
+          <button id="renderBtn" onclick="renderCharacter()">Render Character</button>
+          <button class="secondary" onclick="clearAll()">Clear</button>
+        </div>
       </div>
-      <div class="print-options">
-        <button onclick="window.print()">Print</button>
-        <button onclick="clearAll()">Clear</button>
+      
+      <div class="options-section">
+        <h3 class="section-title">Display Options</h3>
+        
+        <div class="option-row">
+          <div class="option-label">Show Outline</div>
+          <div class="option-control">
+            <label class="checkbox-label">
+              <input type="checkbox" id="showOutline" checked="">
+              <span>Visible</span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="option-row">
+          <div class="option-label">Show Character</div>
+          <div class="option-control">
+            <label class="checkbox-label">
+              <input type="checkbox" id="showCharacter">
+              <span>Visible</span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="option-row">
+          <div class="option-label">Highlight on Complete</div>
+          <div class="option-control">
+            <label class="checkbox-label">
+              <input type="checkbox" id="highlightOnComplete" checked="">
+              <span>Enabled</span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="option-row">
+          <div class="option-label">Stroke Color</div>
+          <div class="option-control color-picker">
+            <input type="color" id="strokeColor" value="#555555">
+          </div>
+        </div>
+        
+        <div class="option-row">
+          <div class="option-label">Outline Color</div>
+          <div class="option-control color-picker">
+            <input type="color" id="outlineColor" value="#dddddd">
+          </div>
+        </div>
+        
+        <div class="option-row">
+          <div class="option-label">Highlight Color</div>
+          <div class="option-control color-picker">
+            <input type="color" id="highlightColor" value="#aaaaff">
+          </div>
+        </div>
       </div>
-      <div class="error" id="errorMessage"></div>
     </div>
     
+    <div class="error" id="errorMessage"></div>
+    <div class="success" id="successMessage"></div>
     <div class="loading" id="loadingIndicator">
-      Generating stroke order diagrams...
+      <p>Loading character data and rendering...</p>
     </div>
     
-    <div id="hanziContainer"></div>
+    <div class="tab-container">
+      <div class="tab-buttons">
+        <button class="tab-button active" onclick="switchTab('displayTab')">Character Display</button>
+        <button class="tab-button" onclick="switchTab('strokesTab')">Stroke Order</button>
+        <button class="tab-button" onclick="switchTab('quizTab')">Quiz Mode</button>
+      </div>
+      
+      <div id="displayTab" class="tab-content active">
+        <div class="character-display" id="characterDisplay">
+          <!-- Main character display will be rendered here -->
+        </div>
+      </div>
+      
+      <div id="strokesTab" class="tab-content">
+        <div class="character-display" id="strokesDisplay">
+          <!-- Stroke order display will be rendered here -->
+        </div>
+      </div>
+      
+      <div id="quizTab" class="tab-content">
+        <div class="character-display" id="quizDisplay">
+          <!-- Quiz mode will be rendered here -->
+        </div>
+        <div class="quiz-controls" id="quizControls">
+          <div class="button-group">
+            <button id="startQuizBtn">Start Quiz</button>
+            <button class="secondary" id="cancelQuizBtn" disabled="">Cancel Quiz</button>
+          </div>
+          <div class="quiz-feedback" id="quizFeedback"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
-    const pinyinMap = {
-      '汉': 'hàn',
-      '字': 'zì',
-      '学': 'xué',
-      '生': 'shēng',
-      '国': 'guó',
-      '人': 'rén',
-      '爱': 'ài',
-      '你': 'nǐ',
-      '好': 'hǎo',
-      '谢': 'xiè',
-      '谢': 'xiè',
-      '再': 'zài',
-      '见': 'jiàn',
-      '我': 'wǒ',
-      '们': 'men',
-      '中': 'zhōng'
+    // Global variables
+    let mainWriter = null;
+    let strokesWriters = [];
+    let quizWriter = null;
+    let currentQuiz = null;
+    let pinyinMap = {
+      '爱': 'ài', '汉': 'hàn', '字': 'zì', '学': 'xué', '生': 'shēng',
+      '国': 'guó', '人': 'rén', '你': 'nǐ', '好': 'hǎo', '谢': 'xiè',
+      '再': 'zài', '见': 'jiàn', '我': 'wǒ', '们': 'men', '中': 'zhōng',
+      '大': 'dà', '小': 'xiǎo', '山': 'shān', '水': 'shuǐ', '天': 'tiān'
     };
 
+    // DOM elements
+    const loadingEl = document.getElementById('loadingIndicator');
+    const errorEl = document.getElementById('errorMessage');
+    const successEl = document.getElementById('successMessage');
+    const quizFeedbackEl = document.getElementById('quizFeedback');
+    const quizControlsEl = document.getElementById('quizControls');
+    const startQuizBtn = document.getElementById('startQuizBtn');
+    const cancelQuizBtn = document.getElementById('cancelQuizBtn');
+
+    // Initialize event listeners
+    startQuizBtn.addEventListener('click', startQuiz);
+    cancelQuizBtn.addEventListener('click', cancelQuiz);
+
+    // Show error message
     function showError(message) {
-      const errorEl = document.getElementById('errorMessage');
       errorEl.textContent = message;
       errorEl.style.display = 'block';
+      successEl.style.display = 'none';
       setTimeout(() => {
         errorEl.style.display = 'none';
+      }, 5000);
+    }
+
+    // Show success message
+    function showSuccess(message) {
+      successEl.textContent = message;
+      successEl.style.display = 'block';
+      errorEl.style.display = 'none';
+      setTimeout(() => {
+        successEl.style.display = 'none';
       }, 3000);
     }
 
+    // Clear all displays
     function clearAll() {
-      document.getElementById('hanziContainer').innerHTML = '';
-      document.getElementById('inputText').value = '';
+      document.getElementById('characterDisplay').innerHTML = '';
+      document.getElementById('strokesDisplay').innerHTML = '';
+      document.getElementById('quizDisplay').innerHTML = '';
+      quizControlsEl.style.display = 'none';
+      quizFeedbackEl.innerHTML = '';
+      mainWriter = null;
+      strokesWriters = [];
+      quizWriter = null;
+      currentQuiz = null;
+      document.getElementById('inputCharacter').value = '';
+      showSuccess('Cleared all displays');
     }
 
-    async function renderCharacters() {
-      const container = document.getElementById('hanziContainer');
-      const loading = document.getElementById('loadingIndicator');
-      container.innerHTML = '';
+    // Switch between tabs
+    function switchTab(tabId) {
+      // Hide all tab contents
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
       
-      const input = document.getElementById('inputText').value.trim();
+      // Deactivate all tab buttons
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      
+      // Activate selected tab
+      document.getElementById(tabId).classList.add('active');
+      
+      // Activate corresponding button
+      document.querySelector(`.tab-button[onclick="switchTab('${tabId}')"]`).classList.add('active');
+    }
+
+    // Get current options from form
+    function getCurrentOptions() {
+      return {
+        showOutline: document.getElementById('showOutline').checked,
+        showCharacter: document.getElementById('showCharacter').checked,
+        width: parseInt(document.getElementById('charWidth').value),
+        height: parseInt(document.getElementById('charHeight').value),
+        padding: parseInt(document.getElementById('charPadding').value),
+        strokeColor: document.getElementById('strokeColor').value,
+        outlineColor: document.getElementById('outlineColor').value,
+        highlightColor: document.getElementById('highlightColor').value,
+        highlightOnComplete: document.getElementById('highlightOnComplete').checked,
+        strokeAnimationSpeed: 1,
+        delayBetweenStrokes: 400,
+        strokeFadeDuration: 400,
+        renderer: 'svg'
+      };
+    }
+
+    // Render main character
+    async function renderCharacter() {
+      const input = document.getElementById('inputCharacter').value.trim();
       if (!input) {
         showError('Please enter at least one character');
         return;
       }
-
-      loading.style.display = 'block';
+      
+      // We'll just use the first character for the main display and quiz
+      const char = input[0];
+      
+      loadingEl.style.display = 'block';
+      errorEl.style.display = 'none';
       
       try {
-        // Process each character sequentially
-        for (const char of input) {
-          if (/[\u4e00-\u9fff]/.test(char)) {
-            await renderCharacter(char);
-          }
+        // Clear previous displays
+        document.getElementById('characterDisplay').innerHTML = '';
+        document.getElementById('strokesDisplay').innerHTML = '';
+        document.getElementById('quizDisplay').innerHTML = '';
+        
+        // Load character data first
+        const charData = await HanziWriter.loadCharacterData(char);
+        
+        if (!charData || charData.strokes.length === 0) {
+          throw new Error(`No stroke data found for character: ${char}`);
         }
+        
+        // Create main character display
+        createMainCharacterDisplay(char);
+        
+        // Create stroke order display
+        createStrokeOrderDisplay(char, charData);
+        
+        // Create quiz display
+        createQuizDisplay(char);
+        
+        showSuccess(`Successfully rendered character: ${char}`);
       } catch (error) {
-        console.error('Error rendering characters:', error);
-        showError('An error occurred while generating the characters');
+        console.error('Error rendering character:', error);
+        showError(`Error: ${error.message}`);
       } finally {
-        loading.style.display = 'none';
+        loadingEl.style.display = 'none';
       }
     }
 
-    async function renderCharacter(char) {
-      return new Promise((resolve, reject) => {
-        const container = document.getElementById('hanziContainer');
+    // Create main character display
+    function createMainCharacterDisplay(char) {
+      const displayEl = document.getElementById('characterDisplay');
+      const options = getCurrentOptions();
+      
+      const charContainer = document.createElement('div');
+      charContainer.className = 'character-container';
+      
+      const title = document.createElement('div');
+      title.className = 'character-title';
+      title.textContent = `Character: ${char}`;
+      charContainer.appendChild(title);
+      
+      const pinyin = document.createElement('div');
+      pinyin.className = 'pinyin';
+      pinyin.textContent = pinyinMap[char] || '';
+      charContainer.appendChild(pinyin);
+      
+      const charEl = document.createElement('div');
+      charEl.className = 'main-character';
+      charContainer.appendChild(charEl);
+      
+      const actionButtons = document.createElement('div');
+      actionButtons.className = 'action-buttons';
+      
+      const animateBtn = document.createElement('button');
+      animateBtn.textContent = 'Animate';
+      animateBtn.onclick = () => mainWriter.animateCharacter();
+      actionButtons.appendChild(animateBtn);
+      
+      const loopBtn = document.createElement('button');
+      loopBtn.textContent = 'Loop Animation';
+      loopBtn.onclick = () => mainWriter.loopCharacterAnimation();
+      actionButtons.appendChild(loopBtn);
+      
+      const pauseBtn = document.createElement('button');
+      pauseBtn.textContent = 'Pause';
+      pauseBtn.onclick = () => mainWriter.pauseAnimation();
+      actionButtons.appendChild(pauseBtn);
+      
+      const resumeBtn = document.createElement('button');
+      resumeBtn.textContent = 'Resume';
+      resumeBtn.onclick = () => mainWriter.resumeAnimation();
+      actionButtons.appendChild(resumeBtn);
+      
+      charContainer.appendChild(actionButtons);
+      displayEl.appendChild(charContainer);
+      
+      // Create the writer instance
+      mainWriter = HanziWriter.create(charEl, char, options);
+      
+      // Set initial visibility
+      if (!options.showCharacter) {
+        mainWriter.hideCharacter({ duration: 0 });
+      }
+      if (!options.showOutline) {
+        mainWriter.hideOutline({ duration: 0 });
+      }
+    }
+
+    // Create stroke order display
+    function createStrokeOrderDisplay(char, charData) {
+      const displayEl = document.getElementById('strokesDisplay');
+      const options = getCurrentOptions();
+      
+      const charContainer = document.createElement('div');
+      charContainer.className = 'character-container';
+      
+      const title = document.createElement('div');
+      title.className = 'character-title';
+      title.textContent = `Stroke Order: ${char}`;
+      charContainer.appendChild(title);
+      
+      const pinyin = document.createElement('div');
+      pinyin.className = 'pinyin';
+      pinyin.textContent = pinyinMap[char] || '';
+      charContainer.appendChild(pinyin);
+      
+      const grid = document.createElement('div');
+      grid.className = 'strokes-grid';
+      charContainer.appendChild(grid);
+      
+      const actionButtons = document.createElement('div');
+      actionButtons.className = 'action-buttons';
+      
+      const animateAllBtn = document.createElement('button');
+      animateAllBtn.textContent = 'Animate All Strokes';
+      animateAllBtn.onclick = animateAllStrokes;
+      actionButtons.appendChild(animateAllBtn);
+      
+      charContainer.appendChild(actionButtons);
+      displayEl.appendChild(charContainer);
+      
+      // Create a writer for each stroke
+      strokesWriters = [];
+      const totalStrokes = charData.strokes.length;
+      
+      for (let i = 1; i <= totalStrokes; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'stroke-cell';
         
-        const block = document.createElement('div');
-        block.className = 'character-print-block';
-
-        const title = document.createElement('div');
-        title.className = 'character-title';
-        title.textContent = `Character: ${char}`;
-        block.appendChild(title);
-
-        const pinyin = document.createElement('div');
-        pinyin.className = 'pinyin';
-        pinyin.textContent = pinyinMap[char] || '';
-        block.appendChild(pinyin);
-
-        const grid = document.createElement('div');
-        grid.className = 'character-grid';
-        block.appendChild(grid);
-        container.appendChild(block);
-
-        HanziWriter.loadCharacterData(char).then(data => {
-          const totalStrokes = data.strokes.length;
-          if (totalStrokes === 0) {
-            reject(new Error(`No stroke data found for character: ${char}`));
-            return;
-          }
-
-          for (let i = 1; i <= totalStrokes; i++) {
-            const cell = document.createElement('div');
-            cell.className = 'stroke-cell';
-            
-            const cellContainer = document.createElement('div');
-            cellContainer.className = 'cell-container';
-            cell.appendChild(cellContainer);
-            
-            const strokeNumber = document.createElement('div');
-            strokeNumber.className = 'stroke-number';
-            strokeNumber.textContent = i;
-            cellContainer.appendChild(strokeNumber);
-            
-            grid.appendChild(cell);
-
-            const writer = HanziWriter.create(cellContainer, char, {
-              width: 100,
-              height: 100,
-              padding: 5,
-              strokeAnimationSpeed: 1,
-              delayBetweenStrokes: 100,
-              showOutline: true,
-              showCharacter: false,
-              strokeFadeDuration: 0,
-              delayBetweenLoops: 0,
-              strokeColor: '#000',
-              highlightOnComplete: false,
-              radicalColor: null,
-            });
-
-            writer.setStrokesVisible(i);
-          }
-          resolve();
-        }).catch(error => {
-          console.error(`Error loading character ${char}:`, error);
-          reject(error);
+        const strokeNum = document.createElement('div');
+        strokeNum.className = 'stroke-number';
+        strokeNum.textContent = i;
+        cell.appendChild(strokeNum);
+        
+        grid.appendChild(cell);
+        
+        const writer = HanziWriter.create(cell, char, {
+          ...options,
+          width: 100,
+          height: 100,
+          showCharacter: false,
+          showOutline: true
         });
+        
+        writer.setStrokesVisible(i);
+        strokesWriters.push(writer);
+      }
+    }
+
+    // Animate all strokes sequentially
+    function animateAllStrokes() {
+      if (strokesWriters.length === 0) return;
+      
+      let currentStroke = 0;
+      
+      function animateNextStroke() {
+        if (currentStroke >= strokesWriters.length) return;
+        
+        const writer = strokesWriters[currentStroke];
+        writer.animateStroke(currentStroke, {
+          onComplete: () => {
+            currentStroke++;
+            animateNextStroke();
+          }
+        });
+      }
+      
+      animateNextStroke();
+    }
+
+    // Create quiz display
+    function createQuizDisplay(char) {
+      const displayEl = document.getElementById('quizDisplay');
+      const options = getCurrentOptions();
+      
+      const charContainer = document.createElement('div');
+      charContainer.className = 'character-container';
+      
+      const title = document.createElement('div');
+      title.className = 'character-title';
+      title.textContent = `Quiz Mode: ${char}`;
+      charContainer.appendChild(title);
+      
+      const pinyin = document.createElement('div');
+      pinyin.className = 'pinyin';
+      pinyin.textContent = pinyinMap[char] || '';
+      charContainer.appendChild(pinyin);
+      
+      const quizEl = document.createElement('div');
+      quizEl.className = 'main-character';
+      charContainer.appendChild(quizEl);
+      
+      displayEl.appendChild(charContainer);
+      quizControlsEl.style.display = 'block';
+      cancelQuizBtn.disabled = true;
+      
+      // Create the writer instance for quiz
+      quizWriter = HanziWriter.create(quizEl, char, {
+        ...options,
+        showCharacter: false,
+        showOutline: true
       });
     }
 
+    // Start quiz
+    function startQuiz() {
+      if (!quizWriter) return;
+      
+      quizFeedbackEl.innerHTML = '';
+      startQuizBtn.disabled = true;
+      cancelQuizBtn.disabled = false;
+      
+      currentQuiz = quizWriter.quiz({
+        onComplete: function(data) {
+          quizFeedbackEl.innerHTML = `
+            <p class="quiz-feedback">Quiz complete!</p>
+            <p>Total mistakes: ${data.totalMistakes}</p>
+          `;
+          startQuizBtn.disabled = false;
+          cancelQuizBtn.disabled = true;
+          currentQuiz = null;
+        },
+        onCorrectStroke: function(data) {
+          quizFeedbackEl.innerHTML = `
+            <p class="quiz-feedback quiz-correct">Correct! Stroke ${data.strokeNum + 1} completed.</p>
+            <p>Mistakes on this stroke: ${data.mistakesOnStroke}</p>
+            <p>Total mistakes: ${data.totalMistakes}</p>
+            <p>Strokes remaining: ${data.strokesRemaining}</p>
+          `;
+        },
+        onMistake: function(data) {
+          quizFeedbackEl.innerHTML = `
+            <p class="quiz-feedback quiz-mistake">Try again! Stroke ${data.strokeNum + 1}</p>
+            <p>Mistakes on this stroke: ${data.mistakesOnStroke}</p>
+            <p>Total mistakes: ${data.totalMistakes}</p>
+            <p>Strokes remaining: ${data.strokesRemaining}</p>
+          `;
+        },
+        showHintAfterMisses: 3,
+        acceptBackwardsStrokes: false,
+        leniency: 0.9
+      });
+    }
+
+    // Cancel quiz
+    function cancelQuiz() {
+      if (currentQuiz) {
+        quizWriter.cancelQuiz();
+        quizFeedbackEl.innerHTML = '<p class="quiz-feedback">Quiz canceled</p>';
+        startQuizBtn.disabled = false;
+        cancelQuizBtn.disabled = true;
+        currentQuiz = null;
+      }
+    }
+
     // Initialize with default character
-    window.onload = renderCharacters;
+    window.onload = renderCharacter;
   </script>
 
 </body></html>
