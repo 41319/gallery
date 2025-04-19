@@ -1,0 +1,103 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <title>Bus Stop Arrival Times</title>
+  <script src="https://npmcdn.com/parse/dist/parse.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 500px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f7f7f7;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      font-size: 1.6em;
+    }
+    label, input, button {
+      display: block;
+      width: 100%;
+      margin-top: 10px;
+      font-size: 1em;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px;
+      background: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    #results {
+      margin-top: 20px;
+    }
+    .bus {
+      background: white;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.05);
+    }
+  </style>
+<meta name="apps-name" content="My Web App"></meta></head>
+<body>
+
+  <h1>Bus Stop Arrival Times</h1>
+
+  <label for="busStopInput">Enter Bus Stop Code:</label>
+  <input type="text" id="busStopInput" value="83139" placeholder="e.g., 83139">
+
+  <button onclick="fetchBusTimings()">Get Timings</button>
+
+  <div id="results"></div>
+
+  <script>
+    // TODO: Replace with your actual Parse server info
+    Parse.initialize("3ZraCGVEMT8vTcJXzKKiZ65OQ9dsJJqo3wDgneHM", "hQkocwX7BFcwJ5aOYqE7rtbmBqRxeIw9aiLuf7Cp");
+    Parse.serverURL = 'https://mobile413.b4a.io';
+
+    async function fetchBusTimings() {
+      const busStopCode = document.getElementById('busStopInput').value.trim();
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = "<em>Loading...</em>";
+
+      if (!busStopCode) {
+        resultsDiv.innerHTML = "<em>Please enter a valid Bus Stop Code.</em>";
+        return;
+      }
+
+      try {
+        const data = await Parse.Cloud.run("getBusArrival", { BusStopCode: busStopCode });
+
+        if (!data.Services || !data.Services.length) {
+          resultsDiv.innerHTML = "<em>No buses arriving soon.</em>";
+          return;
+        }
+
+        resultsDiv.innerHTML = "";
+        data.Services.forEach(service => {
+          const next = service.NextBus.EstimatedArrival;
+          const nextTime = next ? new Date(next).toLocaleTimeString() : "No info";
+          resultsDiv.innerHTML += `
+            <div class="bus">
+              <strong>Bus ${service.ServiceNo}</strong><br>
+              Next Arrival: ${nextTime}
+            </div>`;
+        });
+
+      } catch (error) {
+        console.error("Error fetching bus data:", error);
+        resultsDiv.innerHTML = "<em>Failed to load bus timings. Try again later.</em>";
+      }
+    }
+  </script>
+
+
+
+</body></html>
