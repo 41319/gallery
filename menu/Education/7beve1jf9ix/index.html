@@ -1,0 +1,332 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learn to Write Chinese Characters</title>
+  <meta name="description"><meta name="apps-name" content="My Web App"></meta></head><body>Learn to Write Chinese Characters with better stroke order.
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&amp;display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5.0/dist/hanzi-writer.min.js"></script>
+  <style>
+    body {
+      font-family: 'Noto Sans SC', sans-serif;
+      background-color: #fef9e7;
+      color: #333;
+      text-align: center;
+      padding: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+    h1, h2 { color: #ff6f00; }
+    .input-group, #controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    select, input, button {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 2px solid #ffd54f;
+    }
+    button {
+      background-color: #ffca28;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #ffc107;
+    }
+    #writer-container {
+      margin: 30px auto 10px;
+      width: 300px;
+      height: 330px;
+      background-color: white;
+      border: 3px solid #ffd54f;
+      border-radius: 15px;
+      position: relative;
+    }
+    #writer { width: 100%; height: 300px; }
+    #pronounce-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 22px;
+      background-color: transparent;
+      border: 2px solid #4dd0e1;
+      border-radius: 50%;
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    #pronounce-btn:hover { background-color: rgba(77, 208, 225, 0.2); }
+    #pinyin-display {
+      font-size: 22px;
+      margin-top: 6px;
+      color: #5d4037;
+    }
+    .info {
+      font-size: 18px;
+      margin: 5px;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-5px); }
+      40%, 80% { transform: translateX(5px); }
+    }
+    .shake { animation: shake 0.4s ease-in-out; }
+    audio { display: none; }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    .modal-content {
+      background-color: #fff8e1;
+      margin: 100px auto;
+      padding: 20px;
+      border: 3px solid #ffd54f;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+    .modal-content textarea,
+    .modal-content input[type="text"] {
+      display: block;
+      margin: 10px auto;
+      width: 90%;
+      height: 40px;
+      padding: 10px;
+      font-size: 18px;
+      border-radius: 8px;
+      border: 2px solid #ffd54f;
+    }
+    .modal-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    .modal-buttons button {
+      flex: 1 1 45%;
+    }
+  </style>
+<meta name="apps-name" content="My Web App">
+
+  <h1>✏️ Learn to Write Chinese Characters</h1>
+  <div class="input-group">
+    <select id="grade-select" onchange="loadChars()">
+      <option value="common">Common</option>
+    </select>
+    <select id="char-select" onchange="loadCharacter()"></select>
+    <button onclick="openModal()">🛠️ Custom</button>
+  </div>
+  <div id="writer-container">
+    <div id="writer"></div>
+    <button id="pronounce-btn" onclick="pronounceCharacter()">🔊</button>
+  </div>
+  <div id="pinyin-display"></div>
+  <h2>📝 Practice</h2>
+  <div id="controls">
+    <button onclick="writer.animateCharacter()">▶️ Stroke Order</button>
+    <button onclick="loadCharacter()">🔄</button>
+    <button onclick="prevCharacter()">⬅️ Back</button>
+    <button onclick="nextCharacter()">➡️ Next</button>
+    <button id="auto-next-btn" onclick="toggleAutoNext()">⏩ Auto Next: OFF</button>
+  </div>
+  <div class="info" id="accuracy-display">Accuracy: 0%</div>
+  <div class="info" id="streak-display">Perfect Streak: 0</div>
+  <div class="info" id="error-message" style="color:#d32f2f;display:none;">❌ Try again!</div>
+  <div class="info" id="success-message" style="color:#388e3c;display:none;">✅ Perfect!</div>
+
+  <audio id="error-sound" src="https://www.appseek.ai/error.mp3"></audio>
+  <div class="modal" id="customModal">
+    <div class="modal-content">
+      <h3>✍️ Create Custom List</h3>
+      <input type="text" id="listNameInput" placeholder="List name (e.g., My List)">
+      <textarea id="customCharsInput" placeholder="Enter characters... (e.g. 学生好天)"></textarea>
+      <div class="modal-buttons">
+        <button onclick="submitCustomChars()">Save List</button>
+        <button onclick="closeModal()">Cancel</button>
+        <button onclick="deleteCurrentList()">🗑️ Delete List</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    const defaultLists = {
+      common: ['人','大','天','中','口','爱','学','好','国','义','教','生','看','明','日','朋','家','会','重','新','光','气','名','每','外','时']
+    };
+    const pinyinMap = {
+      '人': 'rén','大': 'dà','天': 'tiān','中': 'zhōng','口': 'kǒu','爱': 'ài','学': 'xué','好': 'hǎo',
+      '国': 'guó','义': 'yì','教': 'jiào','生': 'shēng','看': 'kàn','明': 'míng','日': 'rì','朋': 'péng',
+      '家': 'jiā','会': 'huì','重': 'zhòng','新': 'xīn','光': 'guāng','气': 'qì','名': 'míng','每': 'měi',
+      '外': 'wài','时': 'shí'
+    };
+    let charLists = JSON.parse(localStorage.getItem('charLists')) || defaultLists;
+    let currentListName = 'common';
+    let activeCharIndex = 0;
+    let writer;
+    let correctStrokes = 0;
+    let totalStrokes = 0;
+    let perfectStreak = 0;
+    let autoNext = false;
+
+    function loadChars() {
+      currentListName = document.getElementById('grade-select').value;
+      const chars = charLists[currentListName] || [];
+      activeCharIndex = 0;
+      const select = document.getElementById('char-select');
+      select.innerHTML = '';
+      chars.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        select.appendChild(opt);
+      });
+      loadCharacter();
+    }
+
+    function loadCharacter() {
+      const char = document.getElementById('char-select').value || charLists[currentListName][activeCharIndex];
+      if (!char) return;
+      document.getElementById('writer').innerHTML = '';
+      correctStrokes = 0;
+      totalStrokes = 0;
+      document.getElementById('error-message').style.display = 'none';
+      document.getElementById('success-message').style.display = 'none';
+      updateProgress();
+      document.getElementById('pinyin-display').textContent = pinyinMap[char] || '';
+      writer = HanziWriter.create('writer', char, {
+        width: 300,
+        height: 300,
+        padding: 5,
+        showOutline: true,
+        drawingColor: '#000',
+        strokeColor: '#ff7043',
+        outlineColor: '#90caf9',
+        highlightColor: '#ef5350',
+        strokeAnimationSpeed: 1,
+        strokeHighlightSpeed: 2,
+        delayBetweenStrokes: 500
+      });
+      startQuiz();
+    }
+
+    function startQuiz() {
+      writer.quiz({
+        onMistake: () => {
+          totalStrokes++;
+          document.getElementById('error-message').style.display = 'block';
+          document.getElementById('success-message').style.display = 'none';
+          document.getElementById('error-sound').play();
+          document.getElementById('writer-container').classList.add('shake');
+          setTimeout(() => document.getElementById('writer-container').classList.remove('shake'), 400);
+          updateProgress();
+        },
+        onCorrectStroke: () => {
+          correctStrokes++;
+          totalStrokes++;
+          document.getElementById('error-message').style.display = 'none';
+          updateProgress();
+        },
+        onComplete: (summary) => {
+          if (summary.totalMistakes === 0) perfectStreak++;
+          else perfectStreak = 0;
+          document.getElementById('success-message').style.display = 'block';
+          pronounceCharacter();
+          updateProgress();
+          if (autoNext) setTimeout(nextCharacter, 1000);
+        }
+      });
+    }
+
+    function nextCharacter() {
+      activeCharIndex = (activeCharIndex + 1) % charLists[currentListName].length;
+      document.getElementById('char-select').value = charLists[currentListName][activeCharIndex];
+      loadCharacter();
+    }
+
+    function prevCharacter() {
+      activeCharIndex = (activeCharIndex - 1 + charLists[currentListName].length) % charLists[currentListName].length;
+      document.getElementById('char-select').value = charLists[currentListName][activeCharIndex];
+      loadCharacter();
+    }
+
+    function pronounceCharacter() {
+      const char = document.getElementById('char-select').value;
+      const utterance = new SpeechSynthesisUtterance(char);
+      utterance.lang = 'zh-CN';
+      speechSynthesis.speak(utterance);
+    }
+
+    function updateProgress() {
+      const accuracy = totalStrokes ? Math.round((correctStrokes / totalStrokes) * 100) : 0;
+      document.getElementById('accuracy-display').textContent = `Accuracy: ${accuracy}%`;
+      document.getElementById('streak-display').textContent = `Perfect Streak: ${perfectStreak}`;
+    }
+
+    function openModal() {
+      document.getElementById('listNameInput').value = currentListName === 'common' ? '' : currentListName;
+      document.getElementById('customCharsInput').value = (charLists[currentListName] || []).join('');
+      document.getElementById('customModal').style.display = 'block';
+    }
+
+    function closeModal() {
+      document.getElementById('customModal').style.display = 'none';
+    }
+
+    function submitCustomChars() {
+      const name = document.getElementById('listNameInput').value.trim();
+      const input = document.getElementById('customCharsInput').value.trim();
+      if (!name || !input) return;
+      charLists[name] = [...input].filter(c => c.trim());
+      localStorage.setItem('charLists', JSON.stringify(charLists));
+      updateGradeSelect();
+      document.getElementById('grade-select').value = name;
+      closeModal();
+      loadChars();
+    }
+
+    function deleteCurrentList() {
+      if (currentListName !== 'common' && confirm(`Delete list "${currentListName}"?`)) {
+        delete charLists[currentListName];
+        localStorage.setItem('charLists', JSON.stringify(charLists));
+        updateGradeSelect();
+        document.getElementById('grade-select').value = 'common';
+        closeModal();
+        loadChars();
+      }
+    }
+
+    function updateGradeSelect() {
+      const select = document.getElementById('grade-select');
+      select.innerHTML = '';
+      Object.keys(charLists).forEach(name => {
+        const opt = document.createElement('option');
+        opt.value = name;
+        opt.textContent = name === 'common' ? 'Common' : name;
+        select.appendChild(opt);
+      });
+    }
+
+    function toggleAutoNext() {
+      autoNext = !autoNext;
+      document.getElementById('auto-next-btn').textContent = `⏩ Auto Next: ${autoNext ? 'ON' : 'OFF'}`;
+    }
+
+    window.onload = () => {
+      updateGradeSelect();
+      loadChars();
+      document.getElementById('auto-next-btn').textContent = `⏩ Auto Next: ${autoNext ? 'ON' : 'OFF'}`;
+    };
+  </script>
+
+</body></html>
