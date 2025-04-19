@@ -1,20 +1,17 @@
 <!DOCTYPE html><html lang="en"><head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hanzi Writer Column App</title>
+  <title>Printable Hanzi Writer</title>
   <script src="https://unpkg.com/hanzi-writer@3.3.0/dist/hanzi-writer.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f0f2f5;
+      background: #fff;
       margin: 0;
-      padding: 0;
+      padding: 40px 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
-      padding-top: 40px;
       box-sizing: border-box;
     }
 
@@ -56,18 +53,36 @@
     .hanzi-container {
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      align-items: center;
+      gap: 40px;
+    }
+
+    .character-block {
+      display: flex;
+      flex-direction: column;
       align-items: center;
     }
 
     .character-wrapper {
-      width: 100px;
-      height: 100px;
+      width: 120px;
+      height: 120px;
+    }
+
+    .pinyin {
+      margin-top: 10px;
+      font-size: 18px;
+      color: #333;
+    }
+
+    @media print {
+      .input-section, h1, button {
+        display: none;
+      }
     }
   </style>
 <meta name="apps-name" content="My Web App"></meta></head>
 <body>
-  <h1>Write Chinese Characters</h1>
+  <h1>Printable Stroke-by-Stroke Hanzi</h1>
   <div class="input-section">
     <input type="text" id="inputText" placeholder="Enter Chinese characters">
     <button onclick="renderCharacters()">Draw</button>
@@ -75,30 +90,58 @@
   <div class="hanzi-container" id="hanziContainer"></div>
 
   <script>
+    const defaultWord = '汉';
+    const pinyinMap = {
+      '汉': 'hàn',
+      '字': 'zì',
+      '学': 'xué',
+      '生': 'shēng',
+      '国': 'guó',
+      '人': 'rén',
+      '爱': 'ài',
+      // Add more characters and pinyin here as needed
+    };
+
     function renderCharacters() {
       const container = document.getElementById('hanziContainer');
       container.innerHTML = '';
-      const input = document.getElementById('inputText').value.trim();
+      const input = document.getElementById('inputText').value.trim() || defaultWord;
 
       for (const char of input) {
-        if (/[\u4e00-\u9fff]/.test(char)) { // Only allow Hanzi characters
+        if (/[\u4e00-\u9fff]/.test(char)) {
+          const block = document.createElement('div');
+          block.className = 'character-block';
+
           const wrapper = document.createElement('div');
           wrapper.className = 'character-wrapper';
-          container.appendChild(wrapper);
+          block.appendChild(wrapper);
 
-          const writer = HanziWriter.create(wrapper, char, {
-            width: 100,
-            height: 100,
+          const pinyin = document.createElement('div');
+          pinyin.className = 'pinyin';
+          pinyin.textContent = pinyinMap[char] || '';
+          block.appendChild(pinyin);
+
+          container.appendChild(block);
+
+          HanziWriter.create(wrapper, char, {
+            width: 120,
+            height: 120,
             padding: 5,
-            strokeAnimationSpeed: 1,
-            delayBetweenStrokes: 100,
+            strokeAnimationSpeed: 0,
+            delayBetweenStrokes: 0,
             showOutline: true,
-            showCharacter: false
-          });
-          writer.animateCharacter();
+            showCharacter: true,
+            strokeFadeDuration: 0,
+            delayBetweenLoops: 0,
+            strokeColor: '#000',
+            highlightOnComplete: false,
+            drawingColor: '#000'
+          }).renderCharacter();
         }
       }
     }
+
+    window.onload = renderCharacters;
   </script>
 
 
