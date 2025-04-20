@@ -71,6 +71,8 @@
       if (!busStopCode) {
         resultsDiv.innerHTML = "<em>Please enter a valid Bus Stop Code.</em>";
         return;
+      } else {
+        AppUtils.sendToParent('deeplink', { busStopInput: busStopCode });
       }
 
       try {
