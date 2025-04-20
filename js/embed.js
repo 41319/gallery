@@ -117,11 +117,6 @@ const AppUtils = (function() {
         }
     }
 
-    // Initialize on DOM load
-    document.addEventListener('DOMContentLoaded', function() {
-        populateInputsFromQueryString();
-    });
-
     // Public API
     return {
         // Messaging functions
