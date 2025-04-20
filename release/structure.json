@@ -1,1 +1,20 @@
-{}
+{
+  "categories": {
+    "Health & Fitness": [
+      {
+        "placeholder": "7beve1jf9ix",
+        "title": "Learn to Write Chinese Characters",
+        "description": "",
+        "icon": "",
+        "version": "1.0.0",
+        "lastUpdated": "2025-04-20T13:53:15.090Z",
+        "path": "7beve1jf9ix/index.html"
+      }
+    ]
+  },
+  "meta": {
+    "lastUpdated": "2025-04-20T13:53:15.090Z",
+    "totalCategories": 1,
+    "totalApps": 1
+  }
+}
