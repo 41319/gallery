@@ -82,46 +82,78 @@
       const params = new URLSearchParams(window.location.search);
       return params.get(name);
     }
+async function fetchBusTimings() {
+  const busStopCode = document.getElementById('busStopInput').value.trim();
+  const resultsDiv = document.getElementById('results');
+  resultsDiv.innerHTML = "<em>Loading...</em>";
 
-    async function fetchBusTimings() {
-      const busStopCode = document.getElementById('busStopInput').value.trim();
-      const resultsDiv = document.getElementById('results');
-      resultsDiv.innerHTML = "<em>Loading...</em>";
+  if (!busStopCode) {
+    resultsDiv.innerHTML = "<em>Please enter a valid Bus Stop Code.</em>";
+    return;
+  }
 
-      if (!busStopCode) {
-        resultsDiv.innerHTML = "<em>Please enter a valid Bus Stop Code.</em>";
-        return;
-      }
+  if (typeof AppUtils !== "undefined") {
+    AppUtils.initMessaging('*');
+    AppUtils.sendToParent('deeplink', { busStopInput: busStopCode });
+  }
 
-      if (typeof AppUtils !== "undefined") {
-        AppUtils.initMessaging('*');
-        AppUtils.sendToParent('deeplink', { busStopInput: busStopCode });
-      }
+  try {
+    const data = await Parse.Cloud.run("getBusArrival", { BusStopCode: busStopCode });
 
-      try {
-        const data = await Parse.Cloud.run("getBusArrival", { BusStopCode: busStopCode });
+    if (!data.Services || !data.Services.length) {
+      resultsDiv.innerHTML = "<em>No buses arriving soon.</em>";
+      return;
+    }
 
-        if (!data.Services || !data.Services.length) {
-          resultsDiv.innerHTML = "<em>No buses arriving soon.</em>";
-          return;
-        }
+    resultsDiv.innerHTML = "";
 
-        resultsDiv.innerHTML = "";
-        data.Services.forEach(service => {
-          const next = service.NextBus.EstimatedArrival;
-          const nextTime = next ? new Date(next).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "No info";
-          resultsDiv.innerHTML += `
-            <div class="bus">
-              <strong>Bus ${service.ServiceNo}</strong><br>
-              Next Arrival: ${nextTime}
-            </div>`;
+    data.Services.forEach(service => {
+      const times = ['NextBus', 'NextBus2', 'NextBus3'].map(key => {
+        const bus = service[key];
+        if (!bus?.EstimatedArrival) return "No info";
+
+        const arrivalTime = new Date(bus.EstimatedArrival).toLocaleTimeString([], {
+          hour: '2-digit', minute: '2-digit'
         });
 
-      } catch (error) {
-        console.error("Error fetching bus data:", error);
-        resultsDiv.innerHTML = "<em>Failed to load bus timings. Try again later.</em>";
-      }
-    }
+        const loadMap = {
+          SEA: 'Light',
+          SDA: 'Medium',
+          LSD: 'Heavy'
+        };
+
+        const typeMap = {
+          SD: 'Single',
+          DD: 'Double',
+          BD: 'Bendy'
+        };
+
+        return `
+          <div style="margin-top:5px;">
+            <strong>${arrivalTime}</strong> 
+            (${loadMap[bus.Load] || 'Unknown'} Load, 
+            ${typeMap[bus.Type] || 'Unknown'} Deck, 
+            ${bus.Feature === 'WAB' ? 'Wheelchair' : 'No'} Access, 
+            ${bus.Monitored ? 'Live' : 'Scheduled'})
+          </div>
+        `;
+      });
+
+      resultsDiv.innerHTML += `
+        <div class="bus">
+          <strong>Bus ${service.ServiceNo}</strong>
+          ${times.join('')}
+        </div>
+      `;
+    });
+
+  } catch (error) {
+    console.error("Error fetching bus data:", error);
+    resultsDiv.innerHTML = "<em>Failed to load bus timings. Try again later.</em>";
+  }
+}
+
+
 
     // Auto-fetch if query string has busStopInput
     window.onload = () => {
