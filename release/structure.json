@@ -1,19 +1,19 @@
 {
   "categories": {
-    "Productivity": [
+    "Social Media": [
       {
         "placeholder": "t9v30cb00in",
         "title": "Bus Stop Arrival Times",
         "description": "",
         "icon": "",
         "version": "1.0.0",
-        "lastUpdated": "2025-04-20T13:33:39.718Z",
+        "lastUpdated": "2025-04-20T13:43:32.701Z",
         "path": "t9v30cb00in/index.html"
       }
     ]
   },
   "meta": {
-    "lastUpdated": "2025-04-20T13:33:39.718Z",
+    "lastUpdated": "2025-04-20T13:43:32.701Z",
     "totalCategories": 1,
     "totalApps": 1
   }
