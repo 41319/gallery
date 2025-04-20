@@ -1,19 +1,19 @@
 {
   "categories": {
-    "Education": [
+    "Productivity": [
       {
         "placeholder": "t9v30cb00in",
         "title": "Bus Stop Arrival Times",
         "description": "",
         "icon": "",
         "version": "1.0.0",
-        "lastUpdated": "2025-04-20T13:25:21.914Z",
+        "lastUpdated": "2025-04-20T13:25:33.868Z",
         "path": "t9v30cb00in/index.html"
       }
     ]
   },
   "meta": {
-    "lastUpdated": "2025-04-20T13:25:21.914Z",
+    "lastUpdated": "2025-04-20T13:25:33.868Z",
     "totalCategories": 1,
     "totalApps": 1
   }
