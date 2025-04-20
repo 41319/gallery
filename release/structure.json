@@ -21,11 +21,22 @@
         "lastUpdated": "2025-04-20T14:01:13.664Z",
         "path": "t9v30cb00in/index.html"
       }
+    ],
+    "Productivity": [
+      {
+        "placeholder": "t9v30cb00in",
+        "title": "Bus Stop Arrival Times",
+        "description": "",
+        "icon": "",
+        "version": "1.0.0",
+        "lastUpdated": "2025-04-20T23:04:27.201Z",
+        "path": "t9v30cb00in/index.html"
+      }
     ]
   },
   "meta": {
-    "lastUpdated": "2025-04-20T14:01:13.664Z",
-    "totalCategories": 2,
-    "totalApps": 2
+    "lastUpdated": "2025-04-20T23:04:27.201Z",
+    "totalCategories": 3,
+    "totalApps": 3
   }
 }
