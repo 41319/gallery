@@ -3,7 +3,7 @@
   <title>Bus Stop Arrival Times</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://npmcdn.com/parse/dist/parse.min.js"></script>
-
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -20,7 +20,6 @@
       margin-bottom: 20px;
     }
     label {
-      margin-top: 10px;
       font-size: 1em;
     }
     input {
@@ -28,9 +27,9 @@
       padding: 10px;
       font-size: 1em;
       margin-top: 5px;
-      box-sizing: border-box;
       border-radius: 6px;
       border: 1px solid #ccc;
+      box-sizing: border-box;
     }
     button {
       width: 100%;
@@ -52,17 +51,34 @@
     .bus {
       background: white;
       padding: 10px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       border-radius: 6px;
       box-shadow: 0 0 5px rgba(0,0,0,0.05);
     }
     .bus strong {
       font-size: 1.1em;
     }
+    .arrival-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 6px;
+      font-size: 0.95em;
+    }
+    .icons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .material-icons {
+      font-size: 20px;
+      vertical-align: middle;
+    }
+    .green { color: #4caf50; }
+    .yellow { color: #ffeb3b; }
+    .red { color: #f44336; }
   </style>
-
-  <meta name="apps-name" content="My Web App"></meta>
-</head>
+<meta name="apps-name" content="My Web App"></meta></head>
 <body>
 
   <h1>Bus Stop Arrival Times</h1>
@@ -82,80 +98,84 @@
       const params = new URLSearchParams(window.location.search);
       return params.get(name);
     }
-async function fetchBusTimings() {
-  const busStopCode = document.getElementById('busStopInput').value.trim();
-  const resultsDiv = document.getElementById('results');
-  resultsDiv.innerHTML = "<em>Loading...</em>";
 
-  if (!busStopCode) {
-    resultsDiv.innerHTML = "<em>Please enter a valid Bus Stop Code.</em>";
-    return;
-  }
-
-  if (typeof AppUtils !== "undefined") {
-    AppUtils.initMessaging('*');
-    AppUtils.sendToParent('deeplink', { busStopInput: busStopCode });
-  }
-
-  try {
-    const data = await Parse.Cloud.run("getBusArrival", { BusStopCode: busStopCode });
-
-    if (!data.Services || !data.Services.length) {
-      resultsDiv.innerHTML = "<em>No buses arriving soon.</em>";
-      return;
+    function timeDiffMinutes(targetTime) {
+      const diffMs = new Date(targetTime) - new Date();
+      const mins = Math.round(diffMs / 60000);
+      return mins < 0 ? "Departed" : `in ${mins} min${mins === 1 ? "" : "s"}`;
     }
 
-    resultsDiv.innerHTML = "";
+    function getLoadIconClass(load) {
+      return {
+        SEA: 'green',
+        SDA: 'yellow',
+        LSD: 'red'
+      }[load] || '';
+    }
 
-    data.Services.forEach(service => {
-      const times = ['NextBus', 'NextBus2', 'NextBus3'].map(key => {
-        const bus = service[key];
-        if (!bus?.EstimatedArrival) return "No info";
+    function getBusTypeIcon(type) {
+      return {
+        SD: 'directions_bus',
+        DD: 'directions_transit',
+        BD: 'airport_shuttle'
+      }[type] || 'help_outline';
+    }
 
-        const arrivalTime = new Date(bus.EstimatedArrival).toLocaleTimeString([], {
-          hour: '2-digit', minute: '2-digit'
+    function fetchBusTimings() {
+      const busStopCode = document.getElementById('busStopInput').value.trim();
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = "<em>Loading...</em>";
+
+      if (!busStopCode) {
+        resultsDiv.innerHTML = "<em>Please enter a valid Bus Stop Code.</em>";
+        return;
+      }
+
+      if (typeof AppUtils !== "undefined") {
+        AppUtils.initMessaging('*');
+        AppUtils.sendToParent('deeplink', { busStopInput: busStopCode });
+      }
+
+      Parse.Cloud.run("getBusArrival", { BusStopCode: busStopCode })
+        .then(data => {
+          if (!data.Services || !data.Services.length) {
+            resultsDiv.innerHTML = "<em>No buses arriving soon.</em>";
+            return;
+          }
+
+          resultsDiv.innerHTML = "";
+
+          data.Services.forEach(service => {
+            const lines = ['NextBus', 'NextBus2', 'NextBus3'].map(key => {
+              const bus = service[key];
+              if (!bus?.EstimatedArrival) return '<div class="arrival-info"><em>No info</em></div>';
+
+              return `
+                <div class="arrival-info">
+                  <span>${timeDiffMinutes(bus.EstimatedArrival)}</span>
+                  <span class="icons">
+                    <span class="material-icons ${getLoadIconClass(bus.Load)}">circle</span>
+                    <span class="material-icons">${getBusTypeIcon(bus.Type)}</span>
+                    ${bus.Feature === 'WAB' ? '<span class="material-icons">accessible</span>' : ''}
+                  </span>
+                </div>
+              `;
+            });
+
+            resultsDiv.innerHTML += `
+              <div class="bus">
+                <strong>Bus ${service.ServiceNo}</strong>
+                ${lines.join('')}
+              </div>
+            `;
+          });
+        })
+        .catch(error => {
+          console.error("Error fetching bus data:", error);
+          resultsDiv.innerHTML = "<em>Failed to load bus timings. Try again later.</em>";
         });
+    }
 
-        const loadMap = {
-          SEA: 'Light',
-          SDA: 'Medium',
-          LSD: 'Heavy'
-        };
-
-        const typeMap = {
-          SD: 'Single',
-          DD: 'Double',
-          BD: 'Bendy'
-        };
-
-        return `
-          <div style="margin-top:5px;">
-            <strong>${arrivalTime}</strong> 
-            (${loadMap[bus.Load] || 'Unknown'} Load, 
-            ${typeMap[bus.Type] || 'Unknown'} Deck, 
-            ${bus.Feature === 'WAB' ? 'Wheelchair' : 'No'} Access, 
-            ${bus.Monitored ? 'Live' : 'Scheduled'})
-          </div>
-        `;
-      });
-
-      resultsDiv.innerHTML += `
-        <div class="bus">
-          <strong>Bus ${service.ServiceNo}</strong>
-          ${times.join('')}
-        </div>
-      `;
-    });
-
-  } catch (error) {
-    console.error("Error fetching bus data:", error);
-    resultsDiv.innerHTML = "<em>Failed to load bus timings. Try again later.</em>";
-  }
-}
-
-
-
-    // Auto-fetch if query string has busStopInput
     window.onload = () => {
       const busStop = getQueryParam('busStopInput');
       if (busStop) {
