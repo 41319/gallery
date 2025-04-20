@@ -133,7 +133,7 @@ const AppUtils = (function() {
         populateInputsFromQueryString
     };
 })();
-AppUtils.initMessaging('https://appseek.ai');
+
 // Example usage:
 // Initialize messaging with target origin
 // AppUtils.initMessaging('https://your-parent-domain.com');
