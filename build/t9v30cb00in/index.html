@@ -72,7 +72,8 @@
         resultsDiv.innerHTML = "<em>Please enter a valid Bus Stop Code.</em>";
         return;
       } else {
-        AppUtils.initMessaging('https://appseek.ai');
+
+        AppUtils.initMessaging('*');
         AppUtils.sendToParent('deeplink', { busStopInput: busStopCode });
       }
 
@@ -103,5 +104,5 @@
   </script>
 
 
-  <script src="https://build.appseek.ai/js/embed.js"></script>
+  <script src="https://build.appseek.ai/js/embed.js?test"></script>
 </body></html>
