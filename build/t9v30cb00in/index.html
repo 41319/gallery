@@ -1,8 +1,9 @@
 <!DOCTYPE html><html lang="en"><head>
   <meta charset="UTF-8">
   <title>Bus Stop Arrival Times</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://npmcdn.com/parse/dist/parse.min.js"></script>
-  
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -16,20 +17,30 @@
     h1 {
       text-align: center;
       font-size: 1.6em;
+      margin-bottom: 20px;
     }
-    label, input, button {
-      display: block;
-      width: 100%;
+    label {
       margin-top: 10px;
       font-size: 1em;
     }
+    input {
+      width: 100%;
+      padding: 10px;
+      font-size: 1em;
+      margin-top: 5px;
+      box-sizing: border-box;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
     button {
+      width: 100%;
       margin-top: 20px;
       padding: 10px;
       background: #007BFF;
       color: white;
       border: none;
       border-radius: 6px;
+      font-size: 1em;
       cursor: pointer;
     }
     button:hover {
@@ -45,23 +56,32 @@
       border-radius: 6px;
       box-shadow: 0 0 5px rgba(0,0,0,0.05);
     }
+    .bus strong {
+      font-size: 1.1em;
+    }
   </style>
-<meta name="apps-name" content="My Web App"></meta></head>
+
+  <meta name="apps-name" content="My Web App"></meta>
+</head>
 <body>
 
   <h1>Bus Stop Arrival Times</h1>
 
   <label for="busStopInput">Enter Bus Stop Code:</label>
-  <input type="text" id="busStopInput" value="83139" placeholder="e.g., 83139">
+  <input type="text" id="busStopInput" placeholder="e.g., 83139">
 
   <button onclick="fetchBusTimings()">Get Timings</button>
 
   <div id="results"></div>
 
   <script>
-    // TODO: Replace with your actual Parse server info
     Parse.initialize("3ZraCGVEMT8vTcJXzKKiZ65OQ9dsJJqo3wDgneHM", "hQkocwX7BFcwJ5aOYqE7rtbmBqRxeIw9aiLuf7Cp");
     Parse.serverURL = 'https://mobile413.b4a.io';
+
+    function getQueryParam(name) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name);
+    }
 
     async function fetchBusTimings() {
       const busStopCode = document.getElementById('busStopInput').value.trim();
@@ -71,8 +91,9 @@
       if (!busStopCode) {
         resultsDiv.innerHTML = "<em>Please enter a valid Bus Stop Code.</em>";
         return;
-      } else {
+      }
 
+      if (typeof AppUtils !== "undefined") {
         AppUtils.initMessaging('*');
         AppUtils.sendToParent('deeplink', { busStopInput: busStopCode });
       }
@@ -88,7 +109,7 @@
         resultsDiv.innerHTML = "";
         data.Services.forEach(service => {
           const next = service.NextBus.EstimatedArrival;
-          const nextTime = next ? new Date(next).toLocaleTimeString() : "No info";
+          const nextTime = next ? new Date(next).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "No info";
           resultsDiv.innerHTML += `
             <div class="bus">
               <strong>Bus ${service.ServiceNo}</strong><br>
@@ -101,8 +122,18 @@
         resultsDiv.innerHTML = "<em>Failed to load bus timings. Try again later.</em>";
       }
     }
+
+    // Auto-fetch if query string has busStopInput
+    window.onload = () => {
+      const busStop = getQueryParam('busStopInput');
+      if (busStop) {
+        document.getElementById('busStopInput').value = busStop;
+        fetchBusTimings();
+      }
+    };
   </script>
 
-
   <script src="https://build.appseek.ai/js/embed.js?test"></script>
+
+
 </body></html>
