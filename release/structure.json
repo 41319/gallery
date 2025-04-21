@@ -20,12 +20,21 @@
         "version": "1.0.0",
         "lastUpdated": "2025-04-21T00:03:46.505Z",
         "path": "7beve1jf9ix/index.html"
+      },
+      {
+        "placeholder": "tgb6umg48s8",
+        "title": "Multi-Character Hanzi Fanning Strokes",
+        "description": "",
+        "icon": "",
+        "version": "1.0.0",
+        "lastUpdated": "2025-04-21T00:34:14.890Z",
+        "path": "tgb6umg48s8/index.html"
       }
     ]
   },
   "meta": {
-    "lastUpdated": "2025-04-21T00:03:46.505Z",
+    "lastUpdated": "2025-04-21T00:34:14.891Z",
     "totalCategories": 2,
-    "totalApps": 2
+    "totalApps": 3
   }
 }
