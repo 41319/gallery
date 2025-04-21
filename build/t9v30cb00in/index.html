@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="en"><head>
   <meta charset="UTF-8">
-  <title> SG Bus</title>
+  <title>SG Bus</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://npmcdn.com/parse/dist/parse.min.js"></script>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -19,13 +19,12 @@
       font-size: 1.6em;
       margin-bottom: 20px;
     }
-    label {
+    label, input, button {
       font-size: 1em;
     }
     input {
       width: 100%;
       padding: 10px;
-      font-size: 1em;
       margin-top: 5px;
       border-radius: 6px;
       border: 1px solid #ccc;
@@ -33,13 +32,12 @@
     }
     button {
       width: 100%;
-      margin-top: 20px;
+      margin-top: 10px;
       padding: 10px;
       background: #007BFF;
       color: white;
       border: none;
       border-radius: 6px;
-      font-size: 1em;
       cursor: pointer;
     }
     button:hover {
@@ -94,6 +92,9 @@
     Parse.initialize("3ZraCGVEMT8vTcJXzKKiZ65OQ9dsJJqo3wDgneHM", "hQkocwX7BFcwJ5aOYqE7rtbmBqRxeIw9aiLuf7Cp");
     Parse.serverURL = 'https://mobile413.b4a.io';
 
+    let autoRefreshInterval = null;
+    let pinnedBuses = [];
+
     function getQueryParam(name) {
       const params = new URLSearchParams(window.location.search);
       return params.get(name);
@@ -121,6 +122,16 @@
       }[type] || 'help_outline';
     }
 
+    function sortServices(services) {
+      return services.sort((a, b) => {
+        const aPinned = pinnedBuses.includes(a.ServiceNo);
+        const bPinned = pinnedBuses.includes(b.ServiceNo);
+        if (aPinned && !bPinned) return -1;
+        if (!aPinned && bPinned) return 1;
+        return a.ServiceNo.localeCompare(b.ServiceNo);
+      });
+    }
+
     function fetchBusTimings() {
       const busStopCode = document.getElementById('busStopInput').value.trim();
       const resultsDiv = document.getElementById('results');
@@ -145,7 +156,9 @@
 
           resultsDiv.innerHTML = "";
 
-          data.Services.forEach(service => {
+          const sortedServices = sortServices(data.Services);
+
+          sortedServices.forEach(service => {
             const lines = ['NextBus', 'NextBus2', 'NextBus3'].map(key => {
               const bus = service[key];
               if (!bus?.EstimatedArrival) return '<div class="arrival-info"><em>No info</em></div>';
@@ -176,13 +189,26 @@
         });
     }
 
+    function startAutoRefresh() {
+      if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+      autoRefreshInterval = setInterval(fetchBusTimings, 30000); // 30 seconds
+    }
+
     window.onload = () => {
       const busStop = getQueryParam('busStopInput');
+      const pinQuery = getQueryParam('pin');
+
+      if (pinQuery) {
+        pinnedBuses = pinQuery.split(',').map(s => s.trim());
+      }
+
       if (busStop) {
         document.getElementById('busStopInput').value = busStop;
         fetchBusTimings();
+        startAutoRefresh();
       }
     };
   </script>
+
 
 </body></html>
