@@ -10,11 +10,22 @@
         "lastUpdated": "2025-04-20T23:04:27.201Z",
         "path": "t9v30cb00in/index.html"
       }
+    ],
+    "Education": [
+      {
+        "placeholder": "7beve1jf9ix",
+        "title": "Learn to Write Chinese Characters",
+        "description": "",
+        "icon": "",
+        "version": "1.0.0",
+        "lastUpdated": "2025-04-21T00:03:46.505Z",
+        "path": "7beve1jf9ix/index.html"
+      }
     ]
   },
   "meta": {
-    "lastUpdated": "2025-04-20T23:04:27.201Z",
-    "totalCategories": 3,
-    "totalApps": 3
+    "lastUpdated": "2025-04-21T00:03:46.505Z",
+    "totalCategories": 2,
+    "totalApps": 2
   }
 }
