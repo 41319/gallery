@@ -1,0 +1,408 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chinese Memory Card Game</title>
+  <style>
+    :root {
+      --primary: #4a6baf;
+      --secondary: #f8f1e5;
+      --accent: #e74c3c;
+      --text: #333;
+      --card-bg: #fff;
+      --card-flipped: #f1f8e9;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+    }
+
+    body {
+      background-color: var(--secondary);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    .game-info {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 800px;
+      margin-bottom: 20px;
+      background: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .game-board {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 10px;
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 768px) {
+      .game-board {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .game-board {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .card {
+      aspect-ratio: 1;
+      background-color: var(--card-bg);
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      position: relative;
+      transform-style: preserve-3d;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    }
+
+    .card.flipped {
+      background-color: var(--card-flipped);
+      transform: rotateY(180deg);
+    }
+
+    .card.matched {
+      visibility: hidden;
+      opacity: 0;
+      transition: visibility 0s 0.5s, opacity 0.5s linear;
+    }
+
+    .card .front, .card .back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 8px;
+    }
+
+    .card .front {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .card .back {
+      background-color: var(--card-bg);
+      transform: rotateY(180deg);
+    }
+
+    button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background-color: #3a5a9f;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .modal.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
+    }
+
+    .modal h2 {
+      color: var(--primary);
+      margin-bottom: 20px;
+    }
+  </style>
+<meta name="apps-name" content="My Web App"></meta></head>
+<body>
+  <header>
+    <h1>Chinese Memory Card Game</h1>
+    <p>Match the Chinese characters with their English meanings</p>
+  </header>
+
+  <div class="game-info">
+    <div class="moves">Moves: <span id="moves">0</span></div>
+    <div class="pairs">Pairs Found: <span id="pairs">0</span>/12</div>
+    <div class="timer">Time: <span id="timer">00:00</span></div>
+  </div>
+
+  <div class="game-board" id="gameBoard"></div>
+
+  <button id="resetBtn">Reset Game</button>
+
+  <div class="modal" id="winModal">
+    <div class="modal-content">
+      <h2>Congratulations! 🎉</h2>
+      <p>You completed the game in <span id="finalMoves">0</span> moves and <span id="finalTime">00:00</span>!</p>
+      <button id="playAgainBtn">Play Again</button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Game state
+      const state = {
+        cards: [],
+        flippedCards: [],
+        matchedPairs: 0,
+        moves: 0,
+        gameStarted: false,
+        timer: 0,
+        timerInterval: null
+      };
+
+      // DOM elements
+      const gameBoard = document.getElementById('gameBoard');
+      const movesDisplay = document.getElementById('moves');
+      const pairsDisplay = document.getElementById('pairs');
+      const timerDisplay = document.getElementById('timer');
+      const resetBtn = document.getElementById('resetBtn');
+      const winModal = document.getElementById('winModal');
+      const finalMoves = document.getElementById('finalMoves');
+      const finalTime = document.getElementById('finalTime');
+      const playAgainBtn = document.getElementById('playAgainBtn');
+
+      // Chinese words and their English translations
+      const wordPairs = [
+        { chinese: '爱', english: 'Love' },
+        { chinese: '和平', english: 'Peace' },
+        { chinese: '朋友', english: 'Friend' },
+        { chinese: '家庭', english: 'Family' },
+        { chinese: '快乐', english: 'Happy' },
+        { chinese: '学习', english: 'Study' },
+        { chinese: '工作', english: 'Work' },
+        { chinese: '食物', english: 'Food' },
+        { chinese: '水', english: 'Water' },
+        { chinese: '音乐', english: 'Music' },
+        { chinese: '书', english: 'Book' },
+        { chinese: '学校', english: 'School' }
+      ];
+
+      // Initialize the game
+      function initGame() {
+        // Clear previous game
+        gameBoard.innerHTML = '';
+        state.cards = [];
+        state.flippedCards = [];
+        state.matchedPairs = 0;
+        state.moves = 0;
+        state.gameStarted = false;
+        state.timer = 0;
+        
+        if (state.timerInterval) {
+          clearInterval(state.timerInterval);
+        }
+
+        // Update displays
+        movesDisplay.textContent = '0';
+        pairsDisplay.textContent = '0/12';
+        timerDisplay.textContent = '00:00';
+
+        // Create card pairs
+        let cards = [];
+        wordPairs.forEach((pair, index) => {
+          cards.push({
+            id: index * 2,
+            content: pair.chinese,
+            pairId: index,
+            flipped: false,
+            matched: false
+          });
+          cards.push({
+            id: index * 2 + 1,
+            content: pair.english,
+            pairId: index,
+            flipped: false,
+            matched: false
+          });
+        });
+
+        // Shuffle cards
+        state.cards = shuffleArray(cards);
+
+        // Create card elements
+        state.cards.forEach(card => {
+          const cardElement = document.createElement('div');
+          cardElement.className = 'card';
+          cardElement.dataset.id = card.id;
+          
+          const front = document.createElement('div');
+          front.className = 'front';
+          front.textContent = '?';
+          
+          const back = document.createElement('div');
+          back.className = 'back';
+          back.textContent = card.content;
+          
+          cardElement.appendChild(front);
+          cardElement.appendChild(back);
+          
+          cardElement.addEventListener('click', () => handleCardClick(card.id));
+          gameBoard.appendChild(cardElement);
+        });
+      }
+
+      // Shuffle array using Fisher-Yates algorithm
+      function shuffleArray(array) {
+        const newArray = [...array];
+        for (let i = newArray.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+        }
+        return newArray;
+      }
+
+      // Handle card clicks
+      function handleCardClick(cardId) {
+        // Don't allow clicks if already flipped or matched
+        const card = state.cards.find(c => c.id === cardId);
+        if (card.flipped || card.matched || state.flippedCards.length === 2) return;
+
+        // Start timer on first move
+        if (!state.gameStarted) {
+          startTimer();
+          state.gameStarted = true;
+        }
+
+        // Flip the card
+        flipCard(cardId, true);
+
+        // Add to flipped cards
+        state.flippedCards.push(card);
+
+        // Check for match if two cards are flipped
+        if (state.flippedCards.length === 2) {
+          state.moves++;
+          movesDisplay.textContent = state.moves;
+
+          if (state.flippedCards[0].pairId === state.flippedCards[1].pairId) {
+            // Match found
+            state.flippedCards.forEach(c => {
+              c.matched = true;
+              document.querySelector(`.card[data-id="${c.id}"]`).classList.add('matched');
+            });
+            
+            state.matchedPairs++;
+            pairsDisplay.textContent = `${state.matchedPairs}/12`;
+            state.flippedCards = [];
+
+            // Check for win
+            if (state.matchedPairs === 12) {
+              clearInterval(state.timerInterval);
+              showWinModal();
+            }
+          } else {
+            // No match - flip back after delay
+            setTimeout(() => {
+              state.flippedCards.forEach(c => flipCard(c.id, false));
+              state.flippedCards = [];
+            }, 1000);
+          }
+        }
+      }
+
+      // Flip a card
+      function flipCard(cardId, flip) {
+        const card = state.cards.find(c => c.id === cardId);
+        card.flipped = flip;
+        
+        const cardElement = document.querySelector(`.card[data-id="${cardId}"]`);
+        if (flip) {
+          cardElement.classList.add('flipped');
+        } else {
+          cardElement.classList.remove('flipped');
+        }
+      }
+
+      // Start the game timer
+      function startTimer() {
+        state.timerInterval = setInterval(() => {
+          state.timer++;
+          const minutes = Math.floor(state.timer / 60).toString().padStart(2, '0');
+          const seconds = (state.timer % 60).toString().padStart(2, '0');
+          timerDisplay.textContent = `${minutes}:${seconds}`;
+        }, 1000);
+      }
+
+      // Show win modal
+      function showWinModal() {
+        finalMoves.textContent = state.moves;
+        finalTime.textContent = timerDisplay.textContent;
+        winModal.classList.add('active');
+      }
+
+      // Event listeners
+      resetBtn.addEventListener('click', initGame);
+      playAgainBtn.addEventListener('click', () => {
+        winModal.classList.remove('active');
+        initGame();
+      });
+
+      // Start the game
+      initGame();
+    });
+  </script>
+
+</body></html>
