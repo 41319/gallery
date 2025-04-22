@@ -1,4 +1,3 @@
-
 (function () {
   // Create the icon container
   const iconContainer = document.createElement('div');
@@ -33,11 +32,19 @@
     const bookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
     const newBookmark = {
       label: document.title,
-      url: window.location.href
+      url: window.location.href // This includes the full URL with query string
     };
-    bookmarks.push(newBookmark);
-    localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
-    alert(`Saved: "${newBookmark.label}"`);
+    
+    // Check if this exact URL is already bookmarked
+    const alreadyExists = bookmarks.some(b => b.url === newBookmark.url);
+    
+    if (alreadyExists) {
+      alert('This page is already bookmarked!');
+    } else {
+      bookmarks.push(newBookmark);
+      localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+      alert(`Saved: "${newBookmark.label}"`);
+    }
   });
 
   // Append to body
@@ -45,4 +52,3 @@
     document.body.appendChild(iconContainer);
   });
 })();
-
