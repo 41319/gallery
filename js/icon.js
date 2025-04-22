@@ -1,4 +1,4 @@
-<script>
+
 (function () {
   // Create the icon container
   const iconContainer = document.createElement('div');
@@ -45,4 +45,4 @@
     document.body.appendChild(iconContainer);
   });
 })();
-</script>
+
