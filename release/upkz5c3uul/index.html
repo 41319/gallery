@@ -1,0 +1,222 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>What's on your mind</title>
+  <style>
+    :root {
+      --primary: #1976d2;
+      --primary-dark: #1565c0;
+      --text-main: #212121;
+      --text-secondary: #616161;
+      --bg-main: #f5f5f5;
+      --card-bg: #ffffff;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      --active-border: #333;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 32px;
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 600;
+      text-align: center;
+      color: var(--text-secondary);
+    }
+
+    .textbox {
+
+      font-size: 18px;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+    }
+
+    .preview {
+      min-height: 300px;
+      border-radius: 16px;
+      border: 1px solid #e0e0e0;
+      font-size: 24px;
+      font-weight: 500;
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      color: var(--text-main);
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 12px 20px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.2s ease;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .btn-outline {
+      background: white;
+      border: 1px solid var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-outline:hover {
+      background: #e3f2fd;
+    }
+
+    .color-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .color-picker {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .color-option {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: border 0.2s ease;
+    }
+
+    .color-option.active {
+      border: 2px solid r;
+      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .label {
+      text-align: center;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+  </style>
+<meta name="apps-name" content="My Web App"></meta></head>
+<body>
+  <div class="card">
+    <h1>What's on your mind</h1>
+    <input id="textInput" class="textbox" type="text" placeholder="Write something...">
+
+    <div class="color-section">
+      <div class="label">Flat Colors</div>
+      <div class="color-picker" id="flatColors">
+        <div class="color-option active" style="background: #ffe082" data-bg="#ffe082"></div>
+        <div class="color-option" style="background: #ffab91" data-bg="#ffab91"></div>
+        <div class="color-option" style="background: #80deea" data-bg="#80deea"></div>
+        <div class="color-option" style="background: #a5d6a7" data-bg="#a5d6a7"></div>
+        <div class="color-option" style="background: #f8bbd0" data-bg="#f8bbd0"></div>
+        <div class="color-option" style="background: #d7ccc8" data-bg="#d7ccc8"></div>
+      </div>
+
+      <div class="label">Gradient Colors</div>
+      <div class="color-picker" id="gradientColors">
+        <div class="color-option" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)" data-bg="linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)"></div>
+        <div class="color-option" style="background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)" data-bg="linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)"></div>
+        <div class="color-option" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%)" data-bg="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"></div>
+        <div class="color-option" style="background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)" data-bg="linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)"></div>
+        <div class="color-option" style="background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)" data-bg="linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)"></div>
+        <div class="color-option" style="background: linear-gradient(135deg, #fccb90 0%, #d57eeb 100%)" data-bg="linear-gradient(135deg, #fccb90 0%, #d57eeb 100%)"></div>
+      </div>
+    </div>
+
+    <div id="textPreview" class="preview">Write something...</div>
+
+    <div class="actions">
+      <button class="btn btn-outline" id="copyBtn">Copy Text</button>
+      <button class="btn btn-primary" id="saveBtn">Export as Image</button>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+    const textInput = document.getElementById('textInput');
+    const textPreview = document.getElementById('textPreview');
+    const copyBtn = document.getElementById('copyBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const colorOptions = document.querySelectorAll('.color-option');
+
+    textInput.addEventListener('input', () => {
+      textPreview.textContent = textInput.value || "Write something...";
+    });
+
+    copyBtn.addEventListener('click', () => {
+      const text = textInput.value.trim();
+      if (text) {
+        navigator.clipboard.writeText(text).then(() => {
+          const original = copyBtn.textContent;
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => (copyBtn.textContent = original), 2000);
+        });
+      }
+    });
+
+    saveBtn.addEventListener('click', () => {
+      html2canvas(textPreview, {
+        backgroundColor: null,
+        scale: 2,
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'post.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      });
+    });
+
+    colorOptions.forEach(option => {
+      option.addEventListener('click', () => {
+        colorOptions.forEach(o => o.classList.remove('active'));
+        option.classList.add('active');
+        const bg = option.getAttribute('data-bg');
+        textPreview.style.background = bg;
+      });
+    });
+  </script>
+
+
+</body></html>
