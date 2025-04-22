@@ -9,6 +9,15 @@
         "version": "1.0.0",
         "lastUpdated": "2025-04-21T01:55:05.096Z",
         "path": "t9v30cb00in/index.html"
+      },
+      {
+        "placeholder": "upkz5c3uul",
+        "title": "What's on your mind",
+        "description": "",
+        "icon": "",
+        "version": "1.0.0",
+        "lastUpdated": "2025-04-22T00:16:03.328Z",
+        "path": "upkz5c3uul/index.html"
       }
     ],
     "Education": [
@@ -33,8 +42,8 @@
     ]
   },
   "meta": {
-    "lastUpdated": "2025-04-21T01:55:05.096Z",
+    "lastUpdated": "2025-04-22T00:16:03.330Z",
     "totalCategories": 2,
-    "totalApps": 3
+    "totalApps": 4
   }
 }
