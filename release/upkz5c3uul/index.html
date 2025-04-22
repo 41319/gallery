@@ -42,21 +42,28 @@
       font-weight: 600;
       text-align: center;
       color: var(--text-secondary);
+      margin: 0;
     }
 
     .textbox {
-
       font-size: 18px;
       padding: 16px;
       border-radius: 12px;
       border: 1px solid #ccc;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .preview-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
 
     .preview {
       min-height: 300px;
       border-radius: 16px;
       border: 1px solid #e0e0e0;
-      font-size: 24px;
       font-weight: 500;
       padding: 24px;
       display: flex;
@@ -65,6 +72,12 @@
       text-align: center;
       background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
       color: var(--text-main);
+      position: relative;
+      overflow: hidden;
+      word-break: break-word;
+      resize: vertical;
+      min-height: 200px;
+      max-height: 500px;
     }
 
     .actions {
@@ -81,7 +94,7 @@
       border-radius: 8px;
       cursor: pointer;
       font-size: 14px;
-      transition: background-color 0.2s ease;
+      transition: all 0.2s ease;
     }
 
     .btn-primary {
@@ -106,7 +119,7 @@
     .color-section {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 16px;
     }
 
     .color-picker {
@@ -122,18 +135,96 @@
       border-radius: 50%;
       border: 2px solid transparent;
       cursor: pointer;
-      transition: border 0.2s ease;
+      transition: all 0.2s ease;
     }
 
     .color-option.active {
-      border: 2px solid r;
-      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+      border: 2px solid var(--active-border);
+      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+      transform: scale(1.1);
     }
 
     .label {
       text-align: center;
       font-size: 14px;
       font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .slider-label {
+      font-size: 14px;
+      color: var(--text-secondary);
+      min-width: 80px;
+    }
+
+    .slider {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 6px;
+      border-radius: 3px;
+      background: #ddd;
+      outline: none;
+    }
+
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .slider::-webkit-slider-thumb:hover {
+      transform: scale(1.1);
+    }
+
+    .font-color-picker {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .font-color-option {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 12px;
+    }
+
+    .font-color-option.active {
+      border: 2px solid var(--active-border);
+      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+      transform: scale(1.1);
+    }
+
+    .font-size-value {
+      min-width: 30px;
+      text-align: right;
+      font-size: 14px;
       color: var(--text-secondary);
     }
   </style>
@@ -143,29 +234,52 @@
     <h1>What's on your mind</h1>
     <input id="textInput" class="textbox" type="text" placeholder="Write something...">
 
-    <div class="color-section">
-      <div class="label">Flat Colors</div>
-      <div class="color-picker" id="flatColors">
-        <div class="color-option active" style="background: #ffe082" data-bg="#ffe082"></div>
-        <div class="color-option" style="background: #ffab91" data-bg="#ffab91"></div>
-        <div class="color-option" style="background: #80deea" data-bg="#80deea"></div>
-        <div class="color-option" style="background: #a5d6a7" data-bg="#a5d6a7"></div>
-        <div class="color-option" style="background: #f8bbd0" data-bg="#f8bbd0"></div>
-        <div class="color-option" style="background: #d7ccc8" data-bg="#d7ccc8"></div>
-      </div>
-
-      <div class="label">Gradient Colors</div>
-      <div class="color-picker" id="gradientColors">
-        <div class="color-option" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)" data-bg="linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)"></div>
-        <div class="color-option" style="background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)" data-bg="linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)"></div>
-        <div class="color-option" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%)" data-bg="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"></div>
-        <div class="color-option" style="background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)" data-bg="linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)"></div>
-        <div class="color-option" style="background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)" data-bg="linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)"></div>
-        <div class="color-option" style="background: linear-gradient(135deg, #fccb90 0%, #d57eeb 100%)" data-bg="linear-gradient(135deg, #fccb90 0%, #d57eeb 100%)"></div>
+    <div class="preview-container">
+      <div id="textPreview" class="preview" style="font-size: 36px; color: #212121;">Write something...</div>
+      
+      <div class="slider-container">
+        <span class="slider-label">Font Size</span>
+        <input type="range" min="12" max="72" value="36" class="slider" id="fontSizeSlider">
+        <span class="font-size-value" id="fontSizeValue">36px</span>
       </div>
     </div>
 
-    <div id="textPreview" class="preview">Write something...</div>
+    <div class="controls">
+      <div class="color-section">
+        <div class="label">Text Color</div>
+        <div class="font-color-picker" id="fontColors">
+          <div class="font-color-option active" style="background: #212121; color: white;" data-color="#212121">A</div>
+          <div class="font-color-option" style="background: #e53935; color: white;" data-color="#e53935">A</div>
+          <div class="font-color-option" style="background: #8e24aa; color: white;" data-color="#8e24aa">A</div>
+          <div class="font-color-option" style="background: #3949ab; color: white;" data-color="#3949ab">A</div>
+          <div class="font-color-option" style="background: #039be5; color: white;" data-color="#039be5">A</div>
+          <div class="font-color-option" style="background: #00897b; color: white;" data-color="#00897b">A</div>
+          <div class="font-color-option" style="background: #7cb342; color: white;" data-color="#7cb342">A</div>
+          <div class="font-color-option" style="background: #fdd835; color: #212121;" data-color="#fdd835">A</div>
+          <div class="font-color-option" style="background: #ffffff; color: #212121; border: 1px solid #ddd;" data-color="#ffffff">A</div>
+        </div>
+
+        <div class="label">Background</div>
+        <div class="color-picker" id="flatColors">
+          <div class="color-option active" style="background: #ffe082" data-bg="#ffe082"></div>
+          <div class="color-option" style="background: #ffab91" data-bg="#ffab91"></div>
+          <div class="color-option" style="background: #80deea" data-bg="#80deea"></div>
+          <div class="color-option" style="background: #a5d6a7" data-bg="#a5d6a7"></div>
+          <div class="color-option" style="background: #f8bbd0" data-bg="#f8bbd0"></div>
+          <div class="color-option" style="background: #d7ccc8" data-bg="#d7ccc8"></div>
+        </div>
+
+        <div class="label">Gradient Background</div>
+        <div class="color-picker" id="gradientColors">
+          <div class="color-option" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)" data-bg="linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)"></div>
+          <div class="color-option" style="background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)" data-bg="linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)"></div>
+          <div class="color-option" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%)" data-bg="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"></div>
+          <div class="color-option" style="background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)" data-bg="linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)"></div>
+          <div class="color-option" style="background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)" data-bg="linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)"></div>
+          <div class="color-option" style="background: linear-gradient(135deg, #fccb90 0%, #d57eeb 100%)" data-bg="linear-gradient(135deg, #fccb90 0%, #d57eeb 100%)"></div>
+        </div>
+      </div>
+    </div>
 
     <div class="actions">
       <button class="btn btn-outline" id="copyBtn">Copy Text</button>
@@ -175,48 +289,109 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
+    // DOM Elements
     const textInput = document.getElementById('textInput');
     const textPreview = document.getElementById('textPreview');
     const copyBtn = document.getElementById('copyBtn');
     const saveBtn = document.getElementById('saveBtn');
+    const fontSizeSlider = document.getElementById('fontSizeSlider');
+    const fontSizeValue = document.getElementById('fontSizeValue');
     const colorOptions = document.querySelectorAll('.color-option');
+    const fontColorOptions = document.querySelectorAll('.font-color-option');
 
+    // Initialize with default values
+    let currentFontSize = 36;
+    let currentFontColor = '#212121';
+    let currentBackground = '#ffe082';
+
+    // Update preview text
     textInput.addEventListener('input', () => {
       textPreview.textContent = textInput.value || "Write something...";
     });
 
+    // Copy text to clipboard
     copyBtn.addEventListener('click', () => {
       const text = textInput.value.trim();
       if (text) {
         navigator.clipboard.writeText(text).then(() => {
           const original = copyBtn.textContent;
           copyBtn.textContent = 'Copied!';
-          setTimeout(() => (copyBtn.textContent = original), 2000);
+          copyBtn.classList.add('btn-primary');
+          copyBtn.classList.remove('btn-outline');
+          setTimeout(() => {
+            copyBtn.textContent = original;
+            copyBtn.classList.remove('btn-primary');
+            copyBtn.classList.add('btn-outline');
+          }, 2000);
         });
       }
     });
 
+    // Export as image
     saveBtn.addEventListener('click', () => {
+      // Temporarily set a fixed size for the export
+      const originalWidth = textPreview.style.width;
+      const originalHeight = textPreview.style.height;
+      textPreview.style.width = '600px';
+      textPreview.style.height = '400px';
+      
       html2canvas(textPreview, {
         backgroundColor: null,
         scale: 2,
+        logging: false,
+        useCORS: true,
       }).then(canvas => {
+        // Restore original dimensions
+        textPreview.style.width = originalWidth;
+        textPreview.style.height = originalHeight;
+        
         const link = document.createElement('a');
-        link.download = 'post.png';
+        link.download = 'mind-post.png';
         link.href = canvas.toDataURL('image/png');
         link.click();
       });
     });
 
+    // Background color selection
     colorOptions.forEach(option => {
       option.addEventListener('click', () => {
         colorOptions.forEach(o => o.classList.remove('active'));
         option.classList.add('active');
-        const bg = option.getAttribute('data-bg');
-        textPreview.style.background = bg;
+        currentBackground = option.getAttribute('data-bg');
+        textPreview.style.background = currentBackground;
       });
     });
-  </script>
 
+    // Font color selection
+    function setFontColor(color) {
+      currentFontColor = color;
+      textPreview.style.color = currentFontColor;
+      
+      // Update active states
+      fontColorOptions.forEach(o => o.classList.remove('active'));
+      
+      // Find if this color exists in quick options
+      const quickOption = Array.from(fontColorOptions).find(o => 
+        o.getAttribute('data-color').toLowerCase() === color.toLowerCase()
+      );
+      
+      if (quickOption) {
+        quickOption.classList.add('active');
+      }
+    }
+
+    fontColorOptions.forEach(option => {
+      option.addEventListener('click', () => {
+        setFontColor(option.getAttribute('data-color'));
+      });
+    });
+
+    // Font size slider
+    fontSizeSlider.addEventListener('input', () => {
+      currentFontSize = fontSizeSlider.value;
+      textPreview.style.fontSize = `${currentFontSize}px`;
+      fontSizeValue.textContent = `${currentFontSize}px`;
+    });
+  </script>
 
 </body></html>
