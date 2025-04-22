@@ -11,6 +11,7 @@
       --bg-main: #f5f5f5;
       --card-bg: #ffffff;
       --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      --active-border: #333;
     }
 
     body {
@@ -26,7 +27,7 @@
 
     .card {
       background: var(--card-bg);
-      border-radius: var(--radius);
+      border-radius: 16px;
       box-shadow: var(--shadow);
       padding: 32px;
       width: 100%;
@@ -44,7 +45,7 @@
     }
 
     .textbox {
-      width: 100%;
+
       font-size: 18px;
       padding: 16px;
       border-radius: 12px;
@@ -53,7 +54,7 @@
 
     .preview {
       min-height: 300px;
-      border-radius: var(--radius);
+      border-radius: 16px;
       border: 1px solid #e0e0e0;
       font-size: 24px;
       font-weight: 500;
@@ -102,6 +103,12 @@
       background: #e3f2fd;
     }
 
+    .color-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
     .color-picker {
       display: flex;
       flex-wrap: wrap;
@@ -119,7 +126,15 @@
     }
 
     .color-option.active {
-      border: 2px solid #000;
+      border: 2px solid r;
+      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .label {
+      text-align: center;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
     }
   </style>
 <meta name="apps-name" content="My Web App"></meta></head>
@@ -128,13 +143,26 @@
     <h1>What's on your mind</h1>
     <input id="textInput" class="textbox" type="text" placeholder="Write something...">
 
-    <div class="color-picker" id="colorPicker">
-      <div class="color-option active" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)" data-bg="linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)"></div>
-      <div class="color-option" style="background: #ffe082" data-bg="#ffe082"></div>
-      <div class="color-option" style="background: #ffab91" data-bg="#ffab91"></div>
-      <div class="color-option" style="background: #80deea" data-bg="#80deea"></div>
-      <div class="color-option" style="background: #a5d6a7" data-bg="#a5d6a7"></div>
-      <div class="color-option" style="background: #f8bbd0" data-bg="#f8bbd0"></div>
+    <div class="color-section">
+      <div class="label">Flat Colors</div>
+      <div class="color-picker" id="flatColors">
+        <div class="color-option active" style="background: #ffe082" data-bg="#ffe082"></div>
+        <div class="color-option" style="background: #ffab91" data-bg="#ffab91"></div>
+        <div class="color-option" style="background: #80deea" data-bg="#80deea"></div>
+        <div class="color-option" style="background: #a5d6a7" data-bg="#a5d6a7"></div>
+        <div class="color-option" style="background: #f8bbd0" data-bg="#f8bbd0"></div>
+        <div class="color-option" style="background: #d7ccc8" data-bg="#d7ccc8"></div>
+      </div>
+
+      <div class="label">Gradient Colors</div>
+      <div class="color-picker" id="gradientColors">
+        <div class="color-option" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)" data-bg="linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)"></div>
+        <div class="color-option" style="background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)" data-bg="linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)"></div>
+        <div class="color-option" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%)" data-bg="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"></div>
+        <div class="color-option" style="background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)" data-bg="linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)"></div>
+        <div class="color-option" style="background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)" data-bg="linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)"></div>
+        <div class="color-option" style="background: linear-gradient(135deg, #fccb90 0%, #d57eeb 100%)" data-bg="linear-gradient(135deg, #fccb90 0%, #d57eeb 100%)"></div>
+      </div>
     </div>
 
     <div id="textPreview" class="preview">Write something...</div>
