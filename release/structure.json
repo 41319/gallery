@@ -39,11 +39,22 @@
         "lastUpdated": "2025-04-21T00:34:14.890Z",
         "path": "tgb6umg48s8/index.html"
       }
+    ],
+    "E-commerce": [
+      {
+        "placeholder": "e8k6i50276",
+        "title": "WhatsApp Contact List | Mobile413",
+        "description": "",
+        "icon": "",
+        "version": "1.0.0",
+        "lastUpdated": "2025-05-10T03:44:02.217Z",
+        "path": "e8k6i50276/index.html"
+      }
     ]
   },
   "meta": {
-    "lastUpdated": "2025-04-22T00:36:15.079Z",
-    "totalCategories": 2,
-    "totalApps": 4
+    "lastUpdated": "2025-05-10T03:44:02.217Z",
+    "totalCategories": 3,
+    "totalApps": 5
   }
 }
