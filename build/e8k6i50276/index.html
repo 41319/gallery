@@ -255,6 +255,38 @@
       text-decoration: underline;
     }
     
+    /* Pagination styles */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+      gap: 10px;
+    }
+    
+    .page-btn {
+      padding: 8px 12px;
+      background-color: #4285F4;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .page-btn:hover {
+      background-color: #3367D6;
+    }
+    
+    .page-btn:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    
+    .current-page {
+      display: flex;
+      align-items: center;
+      padding: 0 15px;
+    }
+    
     /* Responsive adjustments */
     @media (max-width: 768px) {
       .logo h1 {
@@ -350,11 +382,22 @@
     const loadingSpinner = document.getElementById('loadingSpinner');
     const errorMessage = document.getElementById('errorMessage');
     
+    // Pagination variables
+    let currentPage = 1;
+    const resultsPerPage = 10;
+    let allResults = [];
+    let totalResults = 0;
+    
     // Event listeners
-    searchBtn.addEventListener('click', performSearch);
+    searchBtn.addEventListener('click', () => {
+      currentPage = 1; // Reset to first page on new search
+      performSearch();
+    });
+    
     luckyBtn.addEventListener('click', feelingLucky);
     searchInput.addEventListener('keypress', function(e) {
       if (e.key === 'Enter') {
+        currentPage = 1; // Reset to first page on new search
         performSearch();
       }
     });
@@ -369,8 +412,6 @@
         return;
       }
       
-
-      
       // Clear previous results and errors
       clearResults();
       hideError();
@@ -378,14 +419,18 @@
       
       try {
         // Call Parse Cloud Function "searchNumbers"
-        const results = await Parse.Cloud.run("searchNumbers", { 
+        const response = await Parse.Cloud.run("searchNumbers", { 
           query: query,
           countryCode: "US" // Optional: you can add more parameters
         });
         
-        // Display results
-        if (results && results.length > 0) {
-          displayResults(results);
+        // Extract results from the nested response structure
+        allResults = response.result.result || [];
+        totalResults = allResults.length;
+        
+        // Display results with pagination
+        if (allResults.length > 0) {
+          displayResults(currentPage);
         } else {
           displayNoResults(query);
         }
@@ -397,9 +442,90 @@
       }
     }
     
+    // Display results with pagination
+    function displayResults(page) {
+      resultsContainer.innerHTML = '';
+      
+      // Calculate pagination
+      const startIndex = (page - 1) * resultsPerPage;
+      const endIndex = Math.min(startIndex + resultsPerPage, allResults.length);
+      const pageResults = allResults.slice(startIndex, endIndex);
+      
+      // Display each result
+      pageResults.forEach(result => {
+        const card = document.createElement('div');
+        card.className = 'result-card';
+        
+        // Format phone number for display
+        const formattedPhone = formatPhoneNumber(result);
+        
+        // Create result content
+        card.innerHTML = `
+          <h2 class="result-title">${formattedPhone}</h2>
+          <div class="result-url">Phone: ${formattedPhone}</div>
+        `;
+        
+        // Add WhatsApp button
+        const whatsappBtn = createWhatsAppButton(
+          result, 
+          `I'm inquiring about this number: ${formattedPhone}`
+        );
+        card.appendChild(whatsappBtn);
+        
+        resultsContainer.appendChild(card);
+      });
+      
+      // Add pagination controls
+      addPaginationControls();
+      
+      resultsContainer.style.display = 'block';
+    }
+    
+    // Add pagination controls
+    function addPaginationControls() {
+      const totalPages = Math.ceil(totalResults / resultsPerPage);
+      
+      if (totalPages <= 1) return; // Don't show pagination if only one page
+      
+      const paginationDiv = document.createElement('div');
+      paginationDiv.className = 'pagination';
+      
+      // Previous button
+      const prevBtn = document.createElement('button');
+      prevBtn.className = 'page-btn';
+      prevBtn.textContent = 'Previous';
+      prevBtn.disabled = currentPage === 1;
+      prevBtn.addEventListener('click', () => {
+        currentPage--;
+        displayResults(currentPage);
+      });
+      
+      // Current page indicator
+      const pageIndicator = document.createElement('span');
+      pageIndicator.className = 'current-page';
+      pageIndicator.textContent = `Page ${currentPage} of ${totalPages}`;
+      
+      // Next button
+      const nextBtn = document.createElement('button');
+      nextBtn.className = 'page-btn';
+      nextBtn.textContent = 'Next';
+      nextBtn.disabled = currentPage === totalPages;
+      nextBtn.addEventListener('click', () => {
+        currentPage++;
+        displayResults(currentPage);
+      });
+      
+      paginationDiv.appendChild(prevBtn);
+      paginationDiv.appendChild(pageIndicator);
+      paginationDiv.appendChild(nextBtn);
+      
+      resultsContainer.appendChild(paginationDiv);
+    }
+    
     // Feeling lucky function
     async function feelingLucky() {
       searchInput.value = "+1 555-123-4567"; // Example number
+      currentPage = 1;
       performSearch();
     }
     
@@ -425,40 +551,6 @@
     
     function clearResults() {
       resultsContainer.innerHTML = '';
-    }
-    
-    // Display search results
-    function displayResults(results) {
-      resultsContainer.innerHTML = '';
-      
-      results.forEach(result => {
-        const card = document.createElement('div');
-        card.className = 'result-card';
-        
-        // Format phone number for display
-        const formattedPhone = formatPhoneNumber(result.phone || result.objectId);
-        
-        // Create result content
-        card.innerHTML = `
-          <h2 class="result-title">${result.name || 'Unknown'}</h2>
-          <div class="result-url">Phone: ${formattedPhone}</div>
-          ${result.description ? `<div class="result-description">${result.description}</div>` : ''}
-          ${result.address ? `<div class="result-description">Address: ${result.address}</div>` : ''}
-        `;
-        
-        // Add WhatsApp button if phone number exists
-        if (result.phone) {
-          const whatsappBtn = createWhatsAppButton(
-            result.phone, 
-            `I'm inquiring about ${result.name || 'this number'} (${formattedPhone})`
-          );
-          card.appendChild(whatsappBtn);
-        }
-        
-        resultsContainer.appendChild(card);
-      });
-      
-      resultsContainer.style.display = 'block';
     }
     
     // Display when no results found
