@@ -1,163 +1,219 @@
 <!DOCTYPE html><html lang="en"><head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WhatsApp Contact List | Mobile413</title>
+  <title>NumSearch - Mobile Number Search Engine</title>
   <style>
-    /* Base Styles */
-    :root {
-      --primary-color: #25D366; /* WhatsApp green */
-      --secondary-color: #f5f5f5;
-      --text-color: #333;
-      --text-light: #666;
-      --white: #fff;
-      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      --border-radius: 8px;
-      --transition: all 0.3s ease;
-    }
-    
+    /* Reset and base styles */
     * {
-      box-sizing: border-box;
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
     }
     
     body {
-      font-family: 'Segoe UI', Arial, sans-serif;
+      background-color: #f8f9fa;
+      color: #202124;
       line-height: 1.6;
-      color: var(--text-color);
-      background-color: #f9f9f9;
-      padding: 20px;
     }
     
-    /* Layout */
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    
+    /* Header styles */
     header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    
-    h1 {
-      color: var(--primary-color);
-      margin-bottom: 10px;
-      font-size: 2.2rem;
-    }
-    
-    .subtitle {
-      color: var(--text-light);
-      font-size: 1.1rem;
-    }
-    
-    /* Contact Section */
-    .contact-section {
-      background-color: var(--white);
-      border-radius: var(--border-radius);
-      box-shadow: var(--shadow);
-      padding: 25px;
-      margin-bottom: 30px;
-    }
-    
-    .section-header {
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-end;
+      padding: 20px;
       align-items: center;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
     }
     
-    .section-title {
-      font-size: 1.5rem;
-      color: var(--primary-color);
+    .nav-link {
+      margin-left: 15px;
+      text-decoration: none;
+      color: #202124;
+      font-size: 14px;
     }
     
-    .refresh-btn {
-      background-color: var(--primary-color);
-      color: var(--white);
+    .nav-link:hover {
+      text-decoration: underline;
+    }
+    
+    /* Main content */
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 70vh;
+      padding: 20px;
+    }
+    
+    .logo {
+      margin-bottom: 30px;
+    }
+    
+    .logo h1 {
+      font-size: 3rem;
+      font-weight: bold;
+      color: #4285F4;
+    }
+    
+    .logo span:nth-child(1) { color: #4285F4; }
+    .logo span:nth-child(2) { color: #EA4335; }
+    .logo span:nth-child(3) { color: #FBBC05; }
+    .logo span:nth-child(4) { color: #4285F4; }
+    .logo span:nth-child(5) { color: #34A853; }
+    .logo span:nth-child(6) { color: #EA4335; }
+    
+    /* Search form */
+    .search-container {
+      width: 100%;
+      max-width: 584px;
+      position: relative;
+      margin-bottom: 30px;
+    }
+    
+    .search-box {
+      width: 100%;
+      padding: 15px 20px;
+      border: 1px solid #dfe1e5;
+      border-radius: 24px;
+      font-size: 16px;
+      outline: none;
+      box-shadow: 0 1px 6px rgba(32, 33, 36, 0.08);
+    }
+    
+    .search-box:hover, .search-box:focus {
+      box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
+      border-color: rgba(223,225,229,0);
+    }
+    
+    .search-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    
+    .search-btn {
+      background-color: #4285F4;
       border: none;
-      padding: 8px 16px;
-      border-radius: var(--border-radius);
+      border-radius: 24px;
+      color: white;
+      padding: 12px 24px;
+      font-size: 16px;
       cursor: pointer;
-      font-size: 0.9rem;
-      transition: var(--transition);
+      margin-top: 20px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(66, 133, 244, 0.3);
     }
     
-    .refresh-btn:hover {
-      opacity: 0.9;
-      transform: translateY(-1px);
+    .search-btn:hover {
+      background-color: #3367D6;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(66, 133, 244, 0.3);
     }
     
-    .refresh-btn:active {
+    .search-btn:active {
       transform: translateY(0);
     }
     
-    /* Contact List */
-    .contact-list {
-      list-style-type: none;
+    #luckyBtn {
+      background-color: #34A853;
+      box-shadow: 0 2px 5px rgba(52, 168, 83, 0.3);
     }
     
-    .contact-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px;
-      margin-bottom: 10px;
-      background-color: var(--secondary-color);
-      border-radius: var(--border-radius);
-      transition: var(--transition);
-    }
-    
-    .contact-item:hover {
-      background-color: #e0e0e0;
-    }
-    
-    .contact-number {
-      font-weight: 600;
-      font-size: 1.1rem;
+    #luckyBtn:hover {
+      background-color: #2D8E47;
+      box-shadow: 0 4px 8px rgba(52, 168, 83, 0.3);
     }
     
     .whatsapp-btn {
-      background-color: var(--primary-color);
-      color: var(--white);
+      background-color: #25D366;
       border: none;
-      padding: 8px 16px;
-      border-radius: var(--border-radius);
+      border-radius: 24px;
+      color: white;
+      padding: 12px 24px;
+      font-size: 16px;
       cursor: pointer;
-      font-size: 0.9rem;
-      transition: var(--transition);
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(37, 211, 102, 0.3);
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 8px;
       text-decoration: none;
+      width: fit-content;
+      margin: 10px 0;
     }
     
     .whatsapp-btn:hover {
-      opacity: 0.9;
-      transform: translateY(-1px);
+      background-color: #128C7E;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(37, 211, 102, 0.3);
     }
     
     .whatsapp-btn:active {
       transform: translateY(0);
     }
     
-    /* Loading State */
-    .loading {
-      text-align: center;
-      padding: 30px;
-      color: var(--text-light);
+    /* Search icon */
+    .search-icon {
+      position: absolute;
+      right: 20px;
+      top: 15px;
+      color: #9aa0a6;
     }
     
-    .spinner {
-      border: 4px solid rgba(0, 0, 0, 0.1);
+    /* Results section */
+    .results {
+      width: 100%;
+      max-width: 700px;
+      margin-top: 20px;
+      display: none;
+    }
+    
+    .result-card {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 6px rgba(32, 33, 36, 0.08);
+    }
+    
+    .result-title {
+      color: #1a0dab;
+      font-size: 20px;
+      margin-bottom: 5px;
+      text-decoration: none;
+      display: inline-block;
+    }
+    
+    .result-title:hover {
+      text-decoration: underline;
+    }
+    
+    .result-url {
+      color: #3c4043;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    
+    .result-description {
+      color: #3c4043;
+      font-size: 14px;
+    }
+    
+    /* Loading animation */
+    .loading {
+      display: none;
+      margin: 20px auto;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #4285F4;
       border-radius: 50%;
-      border-top: 4px solid var(--primary-color);
-      width: 30px;
-      height: 30px;
+      width: 40px;
+      height: 40px;
       animation: spin 1s linear infinite;
-      margin: 0 auto 15px;
     }
     
     @keyframes spin {
@@ -165,169 +221,234 @@
       100% { transform: rotate(360deg); }
     }
     
-    /* Error State */
-    .error {
-      color: #d32f2f;
-      background-color: #ffebee;
-      padding: 15px;
-      border-radius: var(--border-radius);
-      text-align: center;
-      margin-bottom: 20px;
+    /* Error message */
+    .error-message {
+      color: #d93025;
+      margin-top: 10px;
+      display: none;
     }
     
-    /* Responsive Design */
+    /* Footer */
+    footer {
+      background-color: #f2f2f2;
+      padding: 15px 20px;
+      font-size: 14px;
+      color: #70757a;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+    
+    .footer-links {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    
+    .footer-links a {
+      color: #70757a;
+      text-decoration: none;
+      margin-right: 15px;
+    }
+    
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
+    
+    /* Responsive adjustments */
     @media (max-width: 768px) {
-      .container {
-        padding: 10px;
+      .logo h1 {
+        font-size: 2rem;
       }
       
-      h1 {
-        font-size: 1.8rem;
+      .search-box {
+        padding: 12px 15px;
       }
       
-      .contact-section {
-        padding: 15px;
-      }
-      
-      .contact-item {
+      .search-buttons {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
+        align-items: center;
       }
       
-      .whatsapp-btn {
+      .search-btn {
         width: 100%;
-        justify-content: center;
+        max-width: 200px;
+      }
+      
+      .footer-links {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      
+      .footer-links div {
+        margin-bottom: 10px;
       }
     }
   </style>
-  <meta name="apps-name" content="WhatsApp Contact List | Mobile413"></meta>
-</head>
+<meta name="apps-name" content="NumSearch - Mobile Number Search Engine"></meta></head>
 <body>
-  <div class="container">
-    <header>
-      <h1>Mobile413 Number Finder</h1>
-      <p class="subtitle"> Contact us to get the number</p>
-    </header>
+  <header>
+    <a href="#" class="nav-link">About</a>
+    <a href="#" class="nav-link">Privacy</a>
+    <a href="#" class="nav-link">Terms</a>
+  </header>
+  
+  <main>
+    <div class="logo">
+      <h1>
+        <span>N</span><span>u</span><span>m</span><span>S</span><span>e</span><span>a</span><span>r</span><span>c</span><span>h</span>
+      </h1>
+    </div>
     
-    <main>
-      <section class="contact-section" aria-labelledby="contact-heading">
-        <div class="section-header">
-          <button id="refreshBtn" class="refresh-btn" aria-label="Refresh contacts">
-            Reload
-          </button>
-        </div>
-        
-        <div id="contentArea">
-          <!-- Content will be dynamically inserted here -->
-          <div class="loading">
-            <div class="spinner" aria-hidden="true"></div>
-            <p>Loading contacts...</p>
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
-
+    <div class="search-container">
+      <input type="text" class="search-box" id="searchInput" placeholder="Enter mobile number to search..." aria-label="Search mobile number">
+      <div class="search-icon">🔍</div>
+      <div class="error-message" id="errorMessage"></div>
+    </div>
+    
+    <div class="search-buttons">
+      <button class="search-btn" id="searchBtn">NumSearch</button>
+      <button class="search-btn" id="luckyBtn">I'm Feeling Lucky</button>
+    </div>
+    
+    <div class="loading" id="loadingSpinner"></div>
+    
+    <div class="results" id="resultsContainer">
+      <!-- Results will be inserted here by JavaScript -->
+    </div>
+  </main>
+  
+  <footer>
+    <div class="footer-links">
+      <div>
+        <a href="#">About</a>
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Settings</a>
+      </div>
+      <div>
+        <span>© 2023 NumSearch - Mobile Number Search Engine</span>
+      </div>
+    </div>
+  </footer>
+  
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const contentArea = document.getElementById('contentArea');
-      const refreshBtn = document.getElementById('refreshBtn');
-      const API_URL = 'https://build.appseek.ai/data/e8k6i50276/data.json';
+    // DOM elements
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const luckyBtn = document.getElementById('luckyBtn');
+    const resultsContainer = document.getElementById('resultsContainer');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const errorMessage = document.getElementById('errorMessage');
+    
+    // API endpoint
+    const API_URL = "https://build.appseek.ai/data/e8k6i50276/data.json";
+    
+    // Event listeners
+    searchBtn.addEventListener('click', performSearch);
+    luckyBtn.addEventListener('click', feelingLucky);
+    searchInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        performSearch();
+      }
+    });
+    
+    // Main search function
+    async function performSearch() {
+      const query = searchInput.value.trim();
       
-      // Fetch data from the API
-      async function fetchData() {
-        try {
-          // Show loading state
-          contentArea.innerHTML = `
-            <div class="loading">
-              <div class="spinner" aria-hidden="true"></div>
-              <p>Loading contacts...</p>
-            </div>
-          `;
-          
-          const response = await fetch(API_URL);
-          
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          
-          const data = await response.json();
-          
-          // Check if data is an array
-          if (!Array.isArray(data)) {
-            throw new Error('Data is not in the expected format (array)');
-          }
-          
-          renderData(data);
-        } catch (error) {
-          console.error('Error fetching data:', error);
-          showError(error.message);
-        }
+      if (!query) {
+        errorMessage.textContent = "Please enter a search term";
+        errorMessage.style.display = 'block';
+        resultsContainer.style.display = 'none';
+        return;
       }
       
-      // Render data to the page
-      function renderData(data) {
-        if (data.length === 0) {
-          contentArea.innerHTML = '<p>No contacts available.</p>';
-          return;
+      errorMessage.style.display = 'none';
+      loadingSpinner.style.display = 'block';
+      resultsContainer.style.display = 'none';
+      
+      try {
+        const response = await fetch(API_URL);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
         }
+        const data = await response.json();
         
-        const listItems = data.map(item => {
-          // Ensure the item is a string and clean it
-          const number = String(item).replace(/\D/g, '');
-          
-          // Format the number for display (add spaces for readability)
-          const formattedNumber = number.replace(/(\d{4})(\d{3})(\d{3})/, '$1 $2 $3');
-          
-          // Create WhatsApp link
-          const message = `Enquire on the ${number}`;
-          const whatsappUrl = `https://wa.me/6587413159?text=${encodeURIComponent(message)}`;
-          
-          return `
-            <li class="contact-item">
-              <span class="contact-number">${formattedNumber}</span>
-              <a 
-                href="${whatsappUrl}" 
-                class="whatsapp-btn" 
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Message ${formattedNumber} on WhatsApp"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-6.29-3.51c.174.869.775 1.645 1.573 1.804.174.04.347.025.495-.05.149-.074.26-.198.347-.347.074-.149.05-.322-.025-.471-.075-.149-.644-1.54-.718-1.689-.074-.149-.148-.223-.347-.149-.198.075-.843.386-1.015.511-.173.124-.248.186-.322.335-.075.15-.05.273-.025.397.025.124.05.198.075.26"/>
-                  <path d="M12 2a10 10 0 0 1 10 10 10 10 0 0 1-10 10c-1.768 0-3.46-.41-5-1.15L2 22l1.15-5A10 10 0 0 1 2 12 10 10 0 0 1 12 2m0 2a8 8 0 0 0-8 8c0 1.72.54 3.31 1.46 4.61L4 20l5.39-1.46A8 8 0 0 0 12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8z"/>
-                </svg>
-                Message
-              </a>
-            </li>
-          `;
-        }).join('');
-        
-        contentArea.innerHTML = `
-          <ul class="contact-list">
-            ${listItems}
-          </ul>
-          <p class="contact-count">Showing ${data.length} contacts</p>
-        `;
+        displayResults(query, data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        errorMessage.textContent = "Failed to fetch data. Please try again later.";
+        errorMessage.style.display = 'block';
+      } finally {
+        loadingSpinner.style.display = 'none';
+        resultsContainer.style.display = 'block';
+      }
+    }
+    
+    // Feeling lucky function
+    async function feelingLucky() {
+      searchInput.value = "Random Search";
+      performSearch();
+    }
+    
+    // Display results
+    function displayResults(query, data) {
+      resultsContainer.innerHTML = '';
+      
+      if (!Array.isArray(data)) {
+        errorMessage.textContent = "Invalid data format received from server";
+        errorMessage.style.display = 'block';
+        return;
       }
       
-      // Show error message
-      function showError(message) {
-        contentArea.innerHTML = `
-          <div class="error" role="alert">
-            <p><strong>Error:</strong> ${message}</p>
-            <p>Please try again later.</p>
+      // Filter results based on query (case insensitive)
+      const filteredData = data.filter(item => 
+        item.toLowerCase().includes(query.toLowerCase())
+      );
+      
+      if (filteredData.length === 0) {
+        const card = document.createElement('div');
+        card.className = 'result-card';
+        card.innerHTML = `
+          <h2 class="result-title">No results found</h2>
+          <div class="result-description">
+            <p>No matches found for "${query}" in our database.</p>
           </div>
         `;
+        resultsContainer.appendChild(card);
+        return;
       }
       
-      // Event listener for refresh button
-      refreshBtn.addEventListener('click', fetchData);
-      
-      // Initial data fetch
-      fetchData();
-    });
+      filteredData.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'result-card';
+        
+        // Create WhatsApp button for each result
+        const whatsappBtn = document.createElement('a');
+        whatsappBtn.className = 'whatsapp-btn';
+        whatsappBtn.href = `https://wa.me/6587413159?text=${encodeURIComponent(`I wish to enquire on ${item}`)}`;
+        whatsappBtn.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-6.29-3.588c.174.869.81 1.515 1.691 1.515.413 0 .808-.113 1.158-.315.35-.203.654-.497.89-.857.234-.359.4-.775.48-1.213.083-.437.076-.886-.02-1.316-.096-.43-.28-.83-.54-1.174-.26-.344-.592-.626-.971-.826-.38-.2-.8-.313-1.227-.33-.428-.016-.854.054-1.25.203-.397.15-.754.38-1.046.677-.292.297-.513.653-.647 1.042-.135.39-.18.803-.13 1.21.05.407.192.8.416 1.144.224.344.525.63.88.838.354.208.76.316 1.176.317zM12 0a12 12 0 0 0-9.862 18.865L0 24l5.247-1.757A12 12 0 1 0 12 0zm0 21.43a9.43 9.43 0 1 1 0-18.86 9.43 9.43 0 0 1 0 18.86z"/>
+          </svg>
+          WhatsApp Enquiry
+        `;
+        
+        card.innerHTML = `
+          <h2 class="result-title">${item}</h2>
+        `;
+        
+        card.appendChild(whatsappBtn);
+        resultsContainer.appendChild(card);
+      });
+    }
+    
+    // Initialize with empty search
+    window.onload = function() {
+      searchInput.value = '';
+    };
   </script>
 
 </body></html>
