@@ -369,11 +369,7 @@
         return;
       }
       
-      // Validate phone number format (basic validation)
-      if (!/^[\d\+\-\s]{7,15}$/.test(query)) {
-        showError("Please enter a valid phone number");
-        return;
-      }
+
       
       // Clear previous results and errors
       clearResults();
