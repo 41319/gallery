@@ -425,7 +425,7 @@
         });
         
         // Extract results from the nested response structure
-        allResults = response.result.result || [];
+        allResults = response.result || [];
         totalResults = allResults.length;
         
         // Display results with pagination
