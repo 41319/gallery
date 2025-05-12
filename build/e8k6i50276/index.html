@@ -286,7 +286,8 @@
       }
     }
   </style>
-<meta name="apps-name" content="NumSearch - Mobile Number Search Engine"></meta></head>
+  <meta name="apps-name" content="NumSearch - Mobile Number Search Engine"></meta>
+</head>
 <body>
   <header>
     <a href="#" class="nav-link">About</a>
@@ -333,7 +334,14 @@
     </div>
   </footer>
   
+  <!-- Parse SDK -->
+  <script src="https://npmcdn.com/parse/dist/parse.min.js"></script>
+  
   <script>
+    // Initialize Parse with your credentials
+    Parse.initialize("3ZraCGVEMT8vTcJXzKKiZ65OQ9dsJJqo3wDgneHM", "hQkocwX7BFcwJ5aOYqE7rtbmBqRxeIw9aiLuf7Cp");
+    Parse.serverURL = 'https://mobile413.b4a.io';
+    
     // DOM elements
     const searchInput = document.getElementById('searchInput');
     const searchBtn = document.getElementById('searchBtn');
@@ -341,9 +349,6 @@
     const resultsContainer = document.getElementById('resultsContainer');
     const loadingSpinner = document.getElementById('loadingSpinner');
     const errorMessage = document.getElementById('errorMessage');
-    
-    // API endpoint
-    const API_URL = "https://build.appseek.ai/data/e8k6i50276/data.json";
     
     // Event listeners
     searchBtn.addEventListener('click', performSearch);
@@ -354,101 +359,162 @@
       }
     });
     
-    // Main search function
+    // Main search function using Parse Cloud Function
     async function performSearch() {
       const query = searchInput.value.trim();
       
+      // Validate input
       if (!query) {
-        errorMessage.textContent = "Please enter a search term";
-        errorMessage.style.display = 'block';
-        resultsContainer.style.display = 'none';
+        showError("Please enter a mobile number to search");
         return;
       }
       
-      errorMessage.style.display = 'none';
-      loadingSpinner.style.display = 'block';
-      resultsContainer.style.display = 'none';
+      // Validate phone number format (basic validation)
+      if (!/^[\d\+\-\s]{7,15}$/.test(query)) {
+        showError("Please enter a valid phone number");
+        return;
+      }
+      
+      // Clear previous results and errors
+      clearResults();
+      hideError();
+      showLoading();
       
       try {
-        const response = await fetch(API_URL);
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
+        // Call Parse Cloud Function "searchNumbers"
+        const results = await Parse.Cloud.run("searchNumbers", { 
+          query: query,
+          countryCode: "US" // Optional: you can add more parameters
+        });
         
-        displayResults(query, data);
+        // Display results
+        if (results && results.length > 0) {
+          displayResults(results);
+        } else {
+          displayNoResults(query);
+        }
       } catch (error) {
-        console.error('Error fetching data:', error);
-        errorMessage.textContent = "Failed to fetch data. Please try again later.";
-        errorMessage.style.display = 'block';
+        console.error('Search error:', error);
+        showError("Search failed: " + (error.message || "Please try again later"));
       } finally {
-        loadingSpinner.style.display = 'none';
-        resultsContainer.style.display = 'block';
+        hideLoading();
       }
     }
     
     // Feeling lucky function
     async function feelingLucky() {
-      searchInput.value = "Random Search";
+      searchInput.value = "+1 555-123-4567"; // Example number
       performSearch();
     }
     
-    // Display results
-    function displayResults(query, data) {
+    // Helper functions
+    function showLoading() {
+      loadingSpinner.style.display = 'block';
+      resultsContainer.style.display = 'none';
+    }
+    
+    function hideLoading() {
+      loadingSpinner.style.display = 'none';
+    }
+    
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorMessage.style.display = 'block';
+      resultsContainer.style.display = 'none';
+    }
+    
+    function hideError() {
+      errorMessage.style.display = 'none';
+    }
+    
+    function clearResults() {
+      resultsContainer.innerHTML = '';
+    }
+    
+    // Display search results
+    function displayResults(results) {
       resultsContainer.innerHTML = '';
       
-      if (!Array.isArray(data)) {
-        errorMessage.textContent = "Invalid data format received from server";
-        errorMessage.style.display = 'block';
-        return;
-      }
-      
-      // Filter results based on query (case insensitive)
-      const filteredData = data.filter(item => 
-        item.toLowerCase().includes(query.toLowerCase())
-      );
-      
-      if (filteredData.length === 0) {
+      results.forEach(result => {
         const card = document.createElement('div');
         card.className = 'result-card';
+        
+        // Format phone number for display
+        const formattedPhone = formatPhoneNumber(result.phone || result.objectId);
+        
+        // Create result content
         card.innerHTML = `
+          <h2 class="result-title">${result.name || 'Unknown'}</h2>
+          <div class="result-url">Phone: ${formattedPhone}</div>
+          ${result.description ? `<div class="result-description">${result.description}</div>` : ''}
+          ${result.address ? `<div class="result-description">Address: ${result.address}</div>` : ''}
+        `;
+        
+        // Add WhatsApp button if phone number exists
+        if (result.phone) {
+          const whatsappBtn = createWhatsAppButton(
+            result.phone, 
+            `I'm inquiring about ${result.name || 'this number'} (${formattedPhone})`
+          );
+          card.appendChild(whatsappBtn);
+        }
+        
+        resultsContainer.appendChild(card);
+      });
+      
+      resultsContainer.style.display = 'block';
+    }
+    
+    // Display when no results found
+    function displayNoResults(query) {
+      resultsContainer.innerHTML = `
+        <div class="result-card">
           <h2 class="result-title">No results found</h2>
           <div class="result-description">
             <p>No matches found for "${query}" in our database.</p>
+            <p>Try a different search term or check the number format.</p>
           </div>
-        `;
-        resultsContainer.appendChild(card);
-        return;
-      }
-      
-      filteredData.forEach(item => {
-        const card = document.createElement('div');
-        card.className = 'result-card';
-        
-        // Create WhatsApp button for each result
-        const whatsappBtn = document.createElement('a');
-        whatsappBtn.className = 'whatsapp-btn';
-        whatsappBtn.href = `https://wa.me/6587413159?text=${encodeURIComponent(`I wish to enquire on ${item}`)}`;
-        whatsappBtn.innerHTML = `
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-6.29-3.588c.174.869.81 1.515 1.691 1.515.413 0 .808-.113 1.158-.315.35-.203.654-.497.89-.857.234-.359.4-.775.48-1.213.083-.437.076-.886-.02-1.316-.096-.43-.28-.83-.54-1.174-.26-.344-.592-.626-.971-.826-.38-.2-.8-.313-1.227-.33-.428-.016-.854.054-1.25.203-.397.15-.754.38-1.046.677-.292.297-.513.653-.647 1.042-.135.39-.18.803-.13 1.21.05.407.192.8.416 1.144.224.344.525.63.88.838.354.208.76.316 1.176.317zM12 0a12 12 0 0 0-9.862 18.865L0 24l5.247-1.757A12 12 0 1 0 12 0zm0 21.43a9.43 9.43 0 1 1 0-18.86 9.43 9.43 0 0 1 0 18.86z"/>
-          </svg>
-          WhatsApp Enquiry
-        `;
-        
-        card.innerHTML = `
-          <h2 class="result-title">${item}</h2>
-        `;
-        
-        card.appendChild(whatsappBtn);
-        resultsContainer.appendChild(card);
-      });
+        </div>
+      `;
+      resultsContainer.style.display = 'block';
     }
     
-    // Initialize with empty search
-    window.onload = function() {
+    // Helper to create WhatsApp button
+    function createWhatsAppButton(phone, message) {
+      const btn = document.createElement('a');
+      btn.className = 'whatsapp-btn';
+      btn.href = `https://wa.me/${cleanPhoneNumber(phone)}?text=${encodeURIComponent(message)}`;
+      btn.target = '_blank';
+      btn.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-6.29-3.588c.174.869.81 1.515 1.691 1.515.413 0 .808-.113 1.158-.315.35-.203.654-.497.89-.857.234-.359.4-.775.48-1.213.083-.437.076-.886-.02-1.316-.096-.43-.28-.83-.54-1.174-.26-.344-.592-.626-.971-.826-.38-.2-.8-.313-1.227-.33-.428-.016-.854.054-1.25.203-.397.15-.754.38-1.046.677-.292.297-.513.653-.647 1.042-.135.39-.18.803-.13 1.21.05.407.192.8.416 1.144.224.344.525.63.88.838.354.208.76.316 1.176.317zM12 0a12 12 0 0 0-9.862 18.865L0 24l5.247-1.757A12 12 0 1 0 12 0zm0 21.43a9.43 9.43 0 1 1 0-18.86 9.43 9.43 0 0 1 0 18.86z"/>
+        </svg>
+        WhatsApp Enquiry
+      `;
+      return btn;
+    }
+    
+    // Helper to clean phone number for WhatsApp
+    function cleanPhoneNumber(phone) {
+      return phone.replace(/[^\d+]/g, '');
+    }
+    
+    // Helper to format phone number for display
+    function formatPhoneNumber(phone) {
+      // Simple formatting - you can enhance this
+      const cleaned = phone.replace(/\D/g, '');
+      const match = cleaned.match(/^(\d{1})(\d{3})(\d{3})(\d{4})$/);
+      if (match) {
+        return `+${match[1]} (${match[2]}) ${match[3]}-${match[4]}`;
+      }
+      return phone;
+    }
+    
+    // Initialize on load
+    window.addEventListener('DOMContentLoaded', () => {
       searchInput.value = '';
-    };
+      searchInput.focus();
+    });
   </script>
 
 </body></html>
