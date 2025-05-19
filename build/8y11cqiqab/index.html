@@ -1,0 +1,89 @@
+<!DOCTYPE html><html lang="zh"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>人生智慧年表</title>
+  <style>
+    body {
+      font-family: "Noto Serif SC", serif;
+      background: #f9f6f1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      margin: 0;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    input[type=range] {
+      width: 80%;
+      margin: 30px 0;
+    }
+    .wisdom-box {
+      background: white;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 600px;
+      text-align: center;
+    }
+    .age-label {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #8B4513;
+    }
+    .wisdom-text {
+      font-size: 20px;
+      color: #333;
+    }
+  </style>
+<meta name="apps-name" content="人生智慧年表"></meta></head>
+<body>
+  <h1>中国人生智慧年表</h1>
+  <input type="range" min="0" max="100" value="0" id="ageSlider">
+  <div class="wisdom-box">
+    <div class="age-label" id="ageLabel">年龄：0 岁</div>
+    <div class="wisdom-text" id="wisdomText">胎教：孕期养德，胎中养性。</div>
+  </div>
+
+  <script>
+    const wisdoms = {
+      0: "胎教：孕期养德，胎中养性。",
+      1: "周岁：一岁看大，七岁看老。",
+      3: "幼儿：三岁看大。",
+      7: "童年：七岁看老。",
+      12: "少儿：童言无忌，养性为先。",
+      18: "成年：十八而志，志当存高远。",
+      20: "弱冠：立身修德。",
+      30: "而立：三十而立。",
+      40: "不惑：四十不惑。",
+      50: "知天命：五十知天命。",
+      60: "耳顺：六十而耳顺。",
+      70: "从心所欲：七十从心所欲，不逾矩。",
+      80: "耄耋：耄耋之年，福寿与天齐。",
+      90: "鲐背：鲐背之年，德高望重。",
+      100: "期颐：百岁人生，天命归真。"
+    };
+
+    const ageSlider = document.getElementById("ageSlider");
+    const ageLabel = document.getElementById("ageLabel");
+    const wisdomText = document.getElementById("wisdomText");
+
+    function updateWisdom(age) {
+      const closestAge = Object.keys(wisdoms).reduce((prev, curr) => {
+        return Math.abs(curr - age) < Math.abs(prev - age) ? curr : prev;
+      });
+      ageLabel.textContent = `年龄：${age} 岁`;
+      wisdomText.textContent = wisdoms[closestAge];
+    }
+
+    ageSlider.addEventListener("input", (e) => {
+      const age = parseInt(e.target.value);
+      updateWisdom(age);
+    });
+
+    updateWisdom(0); // Initialize
+  </script>
+
+
+</body></html>
