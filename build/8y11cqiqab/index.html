@@ -36,6 +36,16 @@
       font-size: 20px;
       color: #333;
     }
+    #videoContainer {
+      margin-top: 20px;
+      display: none;
+    }
+    iframe {
+      width: 100%;
+      max-width: 560px;
+      height: 315px;
+      border: none;
+    }
   </style>
 <meta name="apps-name" content="人生智慧年表"></meta></head>
 <body>
@@ -44,6 +54,9 @@
   <div class="wisdom-box">
     <div class="age-label" id="ageLabel">年龄：0 岁</div>
     <div class="wisdom-text" id="wisdomText">胎教：孕期养德，胎中养性。</div>
+  </div>
+  <div id="videoContainer">
+    <iframe id="ageVideo" src="" allowfullscreen=""></iframe>
   </div>
 
   <script>
@@ -65,9 +78,15 @@
       100: "期颐：百岁人生，天命归真。"
     };
 
+    const videos = {
+      0: "https://www.youtube.com/embed/SnM9EhIo4UM"
+    };
+
     const ageSlider = document.getElementById("ageSlider");
     const ageLabel = document.getElementById("ageLabel");
     const wisdomText = document.getElementById("wisdomText");
+    const videoContainer = document.getElementById("videoContainer");
+    const ageVideo = document.getElementById("ageVideo");
 
     function updateWisdom(age) {
       const closestAge = Object.keys(wisdoms).reduce((prev, curr) => {
@@ -75,6 +94,14 @@
       });
       ageLabel.textContent = `年龄：${age} 岁`;
       wisdomText.textContent = wisdoms[closestAge];
+
+      if (videos[age]) {
+        ageVideo.src = videos[age];
+        videoContainer.style.display = "block";
+      } else {
+        ageVideo.src = "";
+        videoContainer.style.display = "none";
+      }
     }
 
     ageSlider.addEventListener("input", (e) => {
