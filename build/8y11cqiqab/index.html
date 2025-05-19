@@ -39,6 +39,9 @@
     #videoContainer {
       margin-top: 20px;
       display: none;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
     }
     iframe {
       width: 100%;
@@ -55,9 +58,7 @@
     <div class="age-label" id="ageLabel">年龄：0 岁</div>
     <div class="wisdom-text" id="wisdomText">胎教：孕期养德，胎中养性。</div>
   </div>
-  <div id="videoContainer">
-    <iframe id="ageVideo" src="" allowfullscreen=""></iframe>
-  </div>
+  <div id="videoContainer"></div>
 
   <script>
     const wisdoms = {
@@ -79,14 +80,13 @@
     };
 
     const videos = {
-      0: "https://www.youtube.com/embed/SnM9EhIo4UM"
+      0: ["https://www.youtube.com/embed/SnM9EhIo4UM"]
     };
 
     const ageSlider = document.getElementById("ageSlider");
     const ageLabel = document.getElementById("ageLabel");
     const wisdomText = document.getElementById("wisdomText");
     const videoContainer = document.getElementById("videoContainer");
-    const ageVideo = document.getElementById("ageVideo");
 
     function updateWisdom(age) {
       const closestAge = Object.keys(wisdoms).reduce((prev, curr) => {
@@ -95,11 +95,16 @@
       ageLabel.textContent = `年龄：${age} 岁`;
       wisdomText.textContent = wisdoms[closestAge];
 
+      videoContainer.innerHTML = "";
       if (videos[age]) {
-        ageVideo.src = videos[age];
-        videoContainer.style.display = "block";
+        videos[age].forEach(url => {
+          const iframe = document.createElement("iframe");
+          iframe.src = url;
+          iframe.allowFullscreen = true;
+          videoContainer.appendChild(iframe);
+        });
+        videoContainer.style.display = "flex";
       } else {
-        ageVideo.src = "";
         videoContainer.style.display = "none";
       }
     }
@@ -111,6 +116,5 @@
 
     updateWisdom(0); // Initialize
   </script>
-
 
 </body></html>
