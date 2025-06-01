@@ -50,11 +50,58 @@
         "lastUpdated": "2025-05-10T03:44:02.217Z",
         "path": "e8k6i50276/index.html"
       }
-    ]
+    ],
+    "AI": [
+    {
+        "placeholder": "openai-gpt4",
+        "title": "OpenAI GPT-4",
+        "description": "Advanced language processing AI by OpenAI.",
+        "icon": "",
+        "version": "1.0.0",
+        "lastUpdated": "2025-06-01T12:00:00.000Z",
+        "path": "https://chat.openai.com/"
+    },
+    {
+        "placeholder": "google-gemini",
+        "title": "Google Gemini",
+        "description": "Multimodal AI model by Google.",
+        "icon": "",
+        "version": "1.0.0",
+        "lastUpdated": "2025-06-01T12:00:00.000Z",
+        "path": "https://gemini.google.com/"
+    },
+    {
+        "placeholder": "deepseek-r1-0528",
+        "title": "DeepSeek R1-0528",
+        "description": "Advanced AI model by DeepSeek.",
+        "icon": "",
+        "version": "1.0.0",
+        "lastUpdated": "2025-06-01T12:00:00.000Z",
+        "path": "https://www.deepseek.com/"
+    },
+    {
+        "placeholder": "alibaba-qwen",
+        "title": "Alibaba Qwen",
+        "description": "AI model by Alibaba.",
+        "icon": "",
+        "version": "1.0.0",
+        "lastUpdated": "2025-06-01T12:00:00.000Z",
+        "path": "https://chat.qwen.ai/"
+    },
+    {
+        "placeholder": "baidu-wenxin",
+        "title": "Baidu Wenxin",
+        "description": "AI model by Baidu.",
+        "icon": "",
+        "version": "1.0.0",
+        "lastUpdated": "2025-06-01T12:00:00.000Z",
+        "path": "https://yiyan.baidu.com/"
+    }
+]
   },
   "meta": {
-    "lastUpdated": "2025-05-10T03:44:02.217Z",
-    "totalCategories": 3,
-    "totalApps": 5
+    "lastUpdated": "2025-06-01T12:00:00.000Z",
+    "totalCategories": 4,
+    "totalApps": 12
   }
 }
