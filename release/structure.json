@@ -4,7 +4,7 @@
       {
         "placeholder": "t9v30cb00in",
         "title": "SG Bus",
-        "description": "",
+        "description": "Real-time SG bus arrival information",
         "icon": "",
         "version": "1.0.0",
         "lastUpdated": "2025-04-21T01:55:05.096Z",
@@ -13,18 +13,36 @@
       {
         "placeholder": "upkz5c3uul",
         "title": "What's on your mind",
-        "description": "",
+        "description": "Quick notes and thoughts journal",
         "icon": "",
         "version": "1.0.0",
         "lastUpdated": "2025-04-22T00:36:15.077Z",
         "path": "upkz5c3uul/index.html"
+      },
+      {
+        "placeholder": "notion",
+        "title": "Notion",
+        "description": "All-in-one workspace for notes and tasks (free tier available)",
+        "icon": "",
+        "version": "2.0.0",
+        "lastUpdated": "2025-06-01T12:00:00.000Z",
+        "path": "https://www.notion.so/"
+      },
+      {
+        "placeholder": "todoist",
+        "title": "Todoist",
+        "description": "Task management app with a free tier",
+        "icon": "",
+        "version": "2.1.0",
+        "lastUpdated": "2025-06-01T12:00:00.000Z",
+        "path": "https://todoist.com/"
       }
     ],
     "Education": [
       {
         "placeholder": "7beve1jf9ix",
         "title": "Learn to Write Chinese Characters",
-        "description": "",
+        "description": "Interactive Hanzi writing practice",
         "icon": "",
         "version": "1.0.0",
         "lastUpdated": "2025-04-21T00:03:46.505Z",
@@ -33,75 +51,122 @@
       {
         "placeholder": "tgb6umg48s8",
         "title": "Multi-Character Hanzi Fanning Strokes",
-        "description": "",
+        "description": "Step-by-step Chinese character visualization",
         "icon": "",
         "version": "1.0.0",
         "lastUpdated": "2025-04-21T00:34:14.890Z",
         "path": "tgb6umg48s8/index.html"
+      },
+      {
+        "placeholder": "khan-academy",
+        "title": "Khan Academy",
+        "description": "Completely free educational videos and exercises",
+        "icon": "",
+        "version": "2.3.0",
+        "lastUpdated": "2025-06-01T12:00:00.000Z",
+        "path": "https://www.khanacademy.org/"
+      },
+      {
+        "placeholder": "duolingo",
+        "title": "Duolingo",
+        "description": "Free language learning app (ads supported)",
+        "icon": "",
+        "version": "3.0.0",
+        "lastUpdated": "2025-06-01T12:00:00.000Z",
+        "path": "https://www.duolingo.com/"
       }
     ],
     "E-commerce": [
       {
         "placeholder": "e8k6i50276",
         "title": "WhatsApp Contact List | Mobile413",
-        "description": "",
+        "description": "Mobile CRM for WhatsApp contact organization",
         "icon": "",
         "version": "1.0.0",
         "lastUpdated": "2025-05-10T03:44:02.217Z",
         "path": "e8k6i50276/index.html"
+      },
+      {
+        "placeholder": "ecwid",
+        "title": "Ecwid",
+        "description": "Free e-commerce store builder with basic plan",
+        "icon": "",
+        "version": "1.0.0",
+        "lastUpdated": "2025-06-01T12:00:00.000Z",
+        "path": "https://www.ecwid.com/"
+      },
+      {
+        "placeholder": "gumroad",
+        "title": "Gumroad",
+        "description": "Free to start digital products storefront",
+        "icon": "",
+        "version": "1.0.0",
+        "lastUpdated": "2025-06-01T12:00:00.000Z",
+        "path": "https://gumroad.com/"
       }
     ],
     "AI": [
-    {
+      {
         "placeholder": "openai-gpt4",
         "title": "OpenAI GPT-4",
-        "description": "Advanced language processing AI by OpenAI.",
+        "description": "Free limited access with ChatGPT free plan",
         "icon": "",
         "version": "1.0.0",
         "lastUpdated": "2025-06-01T12:00:00.000Z",
         "path": "https://chat.openai.com/"
-    },
-    {
+      },
+      {
         "placeholder": "google-gemini",
         "title": "Google Gemini",
-        "description": "Multimodal AI model by Google.",
+        "description": "Free-tier access to Gemini 1.5 via Google",
         "icon": "",
         "version": "1.0.0",
         "lastUpdated": "2025-06-01T12:00:00.000Z",
         "path": "https://gemini.google.com/"
-    },
-    {
-        "placeholder": "deepseek-r1-0528",
-        "title": "DeepSeek R1-0528",
-        "description": "Advanced AI model by DeepSeek.",
+      },
+      {
+        "placeholder": "claude-anthropic",
+        "title": "Claude AI",
+        "description": "Free access to Claude AI (limited usage)",
         "icon": "",
         "version": "1.0.0",
         "lastUpdated": "2025-06-01T12:00:00.000Z",
-        "path": "https://www.deepseek.com/"
-    },
-    {
-        "placeholder": "alibaba-qwen",
-        "title": "Alibaba Qwen",
-        "description": "AI model by Alibaba.",
-        "icon": "",
-        "version": "1.0.0",
-        "lastUpdated": "2025-06-01T12:00:00.000Z",
-        "path": "https://chat.qwen.ai/"
-    },
-    {
+        "path": "https://claude.ai/"
+      },
+      {
         "placeholder": "baidu-wenxin",
         "title": "Baidu Wenxin",
-        "description": "AI model by Baidu.",
+        "description": "Free public AI model by Baidu",
         "icon": "",
         "version": "1.0.0",
         "lastUpdated": "2025-06-01T12:00:00.000Z",
         "path": "https://yiyan.baidu.com/"
-    }
-]
+      }
+    ],
+    "Design": [
+      {
+        "placeholder": "figma",
+        "title": "Figma",
+        "description": "Free for individuals and small teams",
+        "icon": "",
+        "version": "2.0.0",
+        "lastUpdated": "2025-06-01T12:00:00.000Z",
+        "path": "https://www.figma.com/"
+      },
+      {
+        "placeholder": "canva",
+        "title": "Canva",
+        "description": "Free graphic design platform with templates",
+        "icon": "",
+        "version": "3.1.0",
+        "lastUpdated": "2025-06-01T12:00:00.000Z",
+        "path": "https://www.canva.com/"
+      }
+    ]
   },
   "meta": {
     "lastUpdated": "2025-06-01T12:00:00.000Z",
-    "totalCategories": 4,
-    "totalApps": 12
+    "totalCategories": 5,
+    "totalApps": 20
   }
 }
